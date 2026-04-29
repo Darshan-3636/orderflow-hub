@@ -114,7 +114,7 @@ function KDSPage() {
 }
 
 function Column({
-  title, icon, color, orders, actionLabel, onAction,
+  title, icon, color, orders, actionLabel, onAction, secondaryActionLabel, onSecondaryAction,
 }: {
   title: string;
   icon: React.ReactNode;
@@ -122,6 +122,8 @@ function Column({
   orders: Order[];
   actionLabel: string;
   onAction: (id: string) => void;
+  secondaryActionLabel?: string;
+  onSecondaryAction?: (id: string) => void;
 }) {
   return (
     <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
