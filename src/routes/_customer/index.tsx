@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Flame, ArrowRight, Leaf, Clock, BookOpen, Brain, MapPin, Star } from "lucide-react";
+import { Sparkles, Flame, ArrowRight, Leaf, Clock, BookOpen, Brain, MapPin, Salad, Sprout, Sun } from "lucide-react";
 import { toast } from "sonner";
-import campusImg from "@/assets/msrit-campus.webp";
+import heroBowl from "@/assets/hero-fresh-bowl.jpg";
 
 type Item = {
   id: string;
@@ -41,131 +41,127 @@ function HomePage() {
 
   return (
     <div className="w-full">
-      {/* Hero */}
-      <section className="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-charcoal sm:rounded-[2.5rem]">
-          <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-accent/20 blur-3xl" />
-
-          <div className="relative grid items-center gap-10 px-6 py-12 sm:px-10 md:grid-cols-2 md:gap-8 md:py-20">
-            <div className="relative z-10 flex flex-col">
-              <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-charcoal-foreground/15 bg-charcoal-foreground/10 px-3.5 py-1.5 text-xs font-semibold text-charcoal-foreground backdrop-blur">
-                <MapPin className="h-3.5 w-3.5" /> Inside the MSRIT Canteen
-              </span>
-              <h1 className="font-display text-4xl font-extrabold leading-[1.05] text-charcoal-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-                Brain food.<br />
-                <span className="text-accent">Farm-to-Campus.</span>
-              </h1>
-              <p className="mt-5 max-w-md text-base text-charcoal-foreground/75 sm:text-lg">
-                Fresh greens and premium proteins, sourced daily — built to fuel
-                long lab sessions, back-to-back lectures, and last-minute submissions.
-              </p>
-              <div className="mt-7 flex flex-wrap items-center gap-3">
-                <Button asChild variant="hero" size="xl">
-                  <Link to="/explore">Order now <ArrowRight className="h-4 w-4" /></Link>
-                </Button>
-                <Button asChild size="xl" className="border border-charcoal-foreground/20 bg-charcoal-foreground/10 text-charcoal-foreground hover:bg-charcoal-foreground/15">
-                  <Link to="/orders">My orders</Link>
-                </Button>
-              </div>
-
-              <div className="mt-8 flex flex-wrap items-center gap-6">
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-2">
-                    {[0, 1, 2].map((i) => (
-                      <div
-                        key={i}
-                        className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-charcoal bg-gradient-coral text-xs font-bold text-accent-foreground"
-                      >
-                        {String.fromCharCode(65 + i)}
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1 text-accent">
-                      {[0, 1, 2, 3, 4].map((i) => (
-                        <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                      ))}
-                    </div>
-                    <p className="text-xs text-charcoal-foreground/60">Loved by 2,000+ MSRITians</p>
-                  </div>
-                </div>
-              </div>
+      {/* Hero — light, airy, centered */}
+      <section className="mx-auto w-full max-w-7xl px-4 pt-8 sm:px-6 sm:pt-12">
+        <div className="relative grid items-center gap-10 md:grid-cols-2 md:gap-14">
+          <div className="flex flex-col items-start text-left">
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-xs font-semibold text-primary">
+              <Sprout className="h-3.5 w-3.5" /> Honest. Fresh. Daily.
+            </span>
+            <h1 className="mt-5 font-display text-5xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+              Eat fresh.<br />
+              <span className="text-primary">Think sharper.</span>
+            </h1>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+              A farm-to-campus kitchen tucked inside the MSRIT canteen — built around
+              the simple idea that better ingredients make better minds.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Button asChild variant="default" size="xl">
+                <Link to="/explore">Order now <ArrowRight className="h-4 w-4" /></Link>
+              </Button>
+              <Button asChild variant="outline" size="xl">
+                <Link to="/orders">My orders</Link>
+              </Button>
             </div>
+            <div className="mt-10 grid w-full max-w-md grid-cols-3 gap-6">
+              <Stat value="2k+" label="MSRITians fed" />
+              <Stat value="100%" label="Sourced daily" />
+              <Stat value="~12m" label="Order to plate" />
+            </div>
+          </div>
 
-            {/* Hero image */}
-            <div className="relative mx-auto w-full max-w-lg md:max-w-none">
-              <div className="absolute -inset-6 rounded-[3rem] bg-gradient-coral opacity-25 blur-3xl" />
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] shadow-elegant sm:rounded-[2.5rem]">
-                <img
-                  src={campusImg}
-                  alt="MSRIT campus — home of our canteen kitchen"
-                  className="h-full w-full object-cover"
-                  loading="eager"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-transparent to-transparent" />
-                <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full bg-background/95 px-3.5 py-2 text-xs font-bold shadow-soft backdrop-blur">
-                  <Leaf className="h-3.5 w-3.5 text-primary" /> Sourced today
-                </div>
-                <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between gap-3 rounded-2xl bg-background/95 px-4 py-3 shadow-elegant backdrop-blur">
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-                      <Clock className="h-5 w-5 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <div className="font-display text-sm font-extrabold">~12 min</div>
-                      <div className="text-[10px] text-muted-foreground">Between lectures</div>
-                    </div>
-                  </div>
-                  <div className="hidden items-center gap-2.5 sm:flex">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent">
-                      <MapPin className="h-5 w-5 text-accent-foreground" />
-                    </div>
-                    <div>
-                      <div className="font-display text-sm font-extrabold">MSRIT</div>
-                      <div className="text-[10px] text-muted-foreground">Main canteen</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {/* Hero image — clean, no overlay */}
+          <div className="relative mx-auto w-full max-w-xl md:max-w-none">
+            <div className="absolute -inset-8 -z-10 rounded-full bg-primary/10 blur-3xl" />
+            <div className="relative aspect-square overflow-hidden rounded-full border border-border/60 bg-secondary/40 shadow-elegant">
+              <img
+                src={heroBowl}
+                alt="Fresh greens, paneer and quinoa bowl"
+                className="h-full w-full object-cover"
+                loading="eager"
+              />
+            </div>
+            <div className="absolute -left-2 top-6 flex items-center gap-2 rounded-full border border-border/60 bg-background px-3.5 py-2 text-xs font-bold shadow-soft sm:left-0">
+              <Leaf className="h-3.5 w-3.5 text-primary" /> Sourced today
+            </div>
+            <div className="absolute -right-2 bottom-10 flex items-center gap-2 rounded-full border border-border/60 bg-background px-3.5 py-2 text-xs font-bold shadow-soft sm:right-0">
+              <Clock className="h-3.5 w-3.5 text-primary" /> Ready in 12 min
             </div>
           </div>
         </div>
       </section>
 
       {/* Feature strip */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
-        <div className="grid gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-soft sm:grid-cols-3 sm:p-6">
-          <Feature icon={<Brain className="h-5 w-5" />} title="Fuel your focus" desc="No grease, no slumps — built to keep you sharp through Engineering Physics." />
-          <Feature icon={<Leaf className="h-5 w-5" />} title="Fresh today" desc="Greens & proteins delivered to the canteen kitchen each morning." />
-          <Feature icon={<BookOpen className="h-5 w-5" />} title="Made for students" desc="Honest pricing, generous portions, ready between bells." />
+      <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Feature icon={<Salad className="h-5 w-5" />} title="Crisp, never tired" desc="Greens and vegetables arrive each morning — washed, prepped, plated within hours." />
+          <Feature icon={<Sun className="h-5 w-5" />} title="Pure prep" desc="No reheats, no heavy oils, no shortcuts. Just real food cooked to order." />
+          <Feature icon={<Brain className="h-5 w-5" />} title="Brain fuel" desc="Lean proteins and complex carbs that keep focus steady through the longest lectures." />
         </div>
       </section>
 
-      {/* MSRIT Pitstop map / blocks */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6">
-        <div className="rounded-3xl bg-gradient-warm p-6 shadow-soft sm:p-10">
+      {/* Essence of Freshness */}
+      <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+            <Sprout className="h-3.5 w-3.5" /> The essence of freshness
+          </span>
+          <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+            From the soil. To the plate. Same day.
+          </h2>
+          <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
+            Every morning before the first lecture begins, our suppliers arrive with
+            the day's harvest — leafy greens still cool from the field, vegetables
+            chosen for their crunch, dairy delivered straight from the dairy. We don't
+            stock for the week. We stock for the day.
+          </p>
+        </div>
+
+        <div className="mx-auto mt-12 grid max-w-5xl gap-4 sm:grid-cols-3">
+          <Pillar
+            number="01"
+            title="Sourced at sunrise"
+            desc="Hand-picked produce from KR Market, Hopcoms and partner farms — on the counter before 7 AM."
+          />
+          <Pillar
+            number="02"
+            title="Prepped clean"
+            desc="No frozen shortcuts, no preservatives, no heavy seed oils. Just rinse, chop, cook, serve."
+          />
+          <Pillar
+            number="03"
+            title="Plated for focus"
+            desc="Balanced protein, fibre and slow carbs — designed to fuel hours of study, not a 3 PM crash."
+          />
+        </div>
+      </section>
+
+      {/* Campus Connection */}
+      <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6">
+        <div className="rounded-[2rem] bg-gradient-warm p-8 shadow-soft sm:p-14">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-              <MapPin className="h-3.5 w-3.5" /> Find us on campus
+            <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+              <MapPin className="h-3.5 w-3.5" /> The campus connection
             </span>
-            <h2 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">
-              Your daily pitstop — Main Block to Apex.
+            <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+              The pitstop in the middle of your day.
             </h2>
-            <p className="mt-3 text-muted-foreground">
-              We're right in the heart of the MSRIT Canteen. Whether you're headed
-              to a 9 AM at LHC or coming out of a late ESB lab, we're a few steps away.
+            <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
+              We sit right in the heart of the MSRIT canteen — the natural meeting point
+              between the Apex Block, LHC, DES, ESB and the Multipurpose Block. Whichever
+              direction your day pulls you, we're a short walk away.
             </p>
           </div>
-          <div className="mx-auto mt-8 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-5">
+          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-5">
             {[
-              { name: "Apex Block", mins: "2 min" },
+              { name: "Apex", mins: "2 min" },
               { name: "LHC", mins: "3 min" },
               { name: "DES", mins: "4 min" },
               { name: "ESB", mins: "5 min" },
               { name: "Multipurpose", mins: "3 min" },
             ].map((b) => (
-              <div key={b.name} className="rounded-2xl border border-border/60 bg-card p-4 text-center shadow-soft">
+              <div key={b.name} className="rounded-2xl border border-border/60 bg-background p-5 text-center shadow-soft">
                 <div className="font-display text-base font-bold">{b.name}</div>
                 <div className="mt-1 text-xs text-muted-foreground">~{b.mins} walk</div>
               </div>
@@ -188,26 +184,25 @@ function HomePage() {
       )}
 
       {/* Ingredient transparency */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6">
+      <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent">
+          <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
             <Leaf className="h-3.5 w-3.5" /> Ingredient transparency
           </span>
-          <h2 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">
-            Where your food comes from.
+          <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+            Know what's on your plate.
           </h2>
-          <p className="mt-3 text-muted-foreground">
-            We believe you should know what's on your plate. Every ingredient,
-            every morning, traceable to the source.
+          <p className="mt-4 text-muted-foreground sm:text-lg">
+            Every ingredient. Every morning. Traceable to its source.
           </p>
         </div>
-        <div className="mx-auto mt-8 max-w-4xl overflow-hidden rounded-3xl border border-border/60 bg-card shadow-soft">
+        <div className="mx-auto mt-10 max-w-4xl overflow-hidden rounded-3xl border border-border/60 bg-card shadow-soft">
           <table className="w-full text-sm">
             <thead className="bg-secondary/60">
               <tr className="text-left">
-                <th className="px-5 py-3 font-display font-bold">Ingredient</th>
-                <th className="px-5 py-3 font-display font-bold">Sourced from</th>
-                <th className="hidden px-5 py-3 font-display font-bold sm:table-cell">Delivered</th>
+                <th className="px-5 py-4 font-display font-bold">Ingredient</th>
+                <th className="px-5 py-4 font-display font-bold">Sourced from</th>
+                <th className="hidden px-5 py-4 font-display font-bold sm:table-cell">Delivered</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60">
@@ -215,14 +210,14 @@ function HomePage() {
                 ["Leafy greens & herbs", "KR Market, Bengaluru", "Daily, 6 AM"],
                 ["Tomatoes & vegetables", "Hopcoms, Yelahanka", "Daily"],
                 ["Paneer & dairy", "Nandini, Karnataka", "Twice daily"],
-                ["Chicken & eggs", "Local farm, Doddaballapur", "Every morning"],
+                ["Eggs & poultry", "Local farm, Doddaballapur", "Every morning"],
                 ["Cold-pressed oils", "Sahyadri Farms", "Weekly"],
                 ["Rice & grains", "Mandya direct trade", "Weekly"],
               ].map(([i, src, freq]) => (
                 <tr key={i} className="transition-smooth hover:bg-secondary/30">
-                  <td className="px-5 py-3 font-semibold">{i}</td>
-                  <td className="px-5 py-3 text-muted-foreground">{src}</td>
-                  <td className="hidden px-5 py-3 text-muted-foreground sm:table-cell">{freq}</td>
+                  <td className="px-5 py-4 font-semibold">{i}</td>
+                  <td className="px-5 py-4 text-muted-foreground">{src}</td>
+                  <td className="hidden px-5 py-4 text-muted-foreground sm:table-cell">{freq}</td>
                 </tr>
               ))}
             </tbody>
@@ -231,22 +226,20 @@ function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-6">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-charcoal p-8 shadow-elegant sm:p-14">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/25 blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-primary/30 blur-3xl" />
-          <div className="relative grid items-center gap-6 md:grid-cols-[1fr_auto]">
-            <div>
-              <h2 className="font-display text-3xl font-extrabold text-charcoal-foreground sm:text-4xl">
-                Got 10 minutes between classes?
-              </h2>
-              <p className="mt-2 max-w-lg text-charcoal-foreground/75">
-                Order now, grab a 4-digit code, skip the canteen queue. Eat well, get back to the grind.
-              </p>
+      <section className="mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6">
+        <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-mint p-10 text-center shadow-soft sm:p-16">
+          <div className="mx-auto max-w-2xl">
+            <h2 className="font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+              Got 10 minutes between classes?
+            </h2>
+            <p className="mt-4 text-base text-foreground/70 sm:text-lg">
+              Order ahead, grab a 4-digit code, skip the queue. Eat well — get back to the grind.
+            </p>
+            <div className="mt-7 flex justify-center">
+              <Button asChild size="xl" variant="default">
+                <Link to="/explore">Start an order <ArrowRight className="h-4 w-4" /></Link>
+              </Button>
             </div>
-            <Button asChild variant="hero" size="xl">
-              <Link to="/explore">Start an order <ArrowRight className="h-4 w-4" /></Link>
-            </Button>
           </div>
         </div>
       </section>
@@ -254,16 +247,35 @@ function HomePage() {
   );
 }
 
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <div className="font-display text-2xl font-extrabold text-foreground">{value}</div>
+      <div className="mt-0.5 text-xs text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
 function Feature({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="flex items-start gap-3 rounded-2xl p-3 transition-smooth hover:bg-secondary/50">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
+    <div className="flex flex-col items-start gap-4 rounded-3xl border border-border/60 bg-card p-6 shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
         {icon}
       </div>
       <div>
-        <h3 className="font-display text-base font-semibold">{title}</h3>
-        <p className="text-xs text-muted-foreground">{desc}</p>
+        <h3 className="font-display text-lg font-bold">{title}</h3>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{desc}</p>
       </div>
+    </div>
+  );
+}
+
+function Pillar({ number, title, desc }: { number: string; title: string; desc: string }) {
+  return (
+    <div className="rounded-3xl border border-border/60 bg-card p-7 shadow-soft">
+      <div className="font-display text-sm font-bold tracking-widest text-primary">{number}</div>
+      <h3 className="mt-3 font-display text-xl font-bold">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
     </div>
   );
 }
@@ -280,16 +292,16 @@ function Section({
 }) {
   if (items.length === 0) return null;
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6">
-      <div className="mb-5 flex items-end justify-between gap-4">
+    <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6">
+      <div className="mb-6 flex items-end justify-between gap-4">
         <div>
-          <h2 className="flex items-center gap-2 font-display text-2xl font-bold sm:text-3xl">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-hero text-primary-foreground shadow-soft">
+          <h2 className="flex items-center gap-2.5 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
               {icon}
             </span>
             {title}
           </h2>
-          {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
+          {subtitle && <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>}
         </div>
         <Link to="/explore" className="hidden text-sm font-semibold text-primary hover:underline sm:inline-flex">
           View all →
@@ -299,11 +311,11 @@ function Section({
         {items.map((item) => (
           <article
             key={item.id}
-            className={`group relative flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-3xl bg-card shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant ${
+            className={`group relative flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant ${
               !item.in_stock ? "opacity-60" : ""
             }`}
           >
-            <div className="relative aspect-[4/3] overflow-hidden rounded-t-3xl bg-gradient-warm">
+            <div className="relative aspect-[4/3] overflow-hidden bg-secondary/40">
               {item.image_url ? (
                 <img
                   src={item.image_url}
@@ -312,7 +324,7 @@ function Section({
                   loading="lazy"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-6xl">🍽️</div>
+                <div className="flex h-full items-center justify-center text-6xl">🥗</div>
               )}
               {showNew && (
                 <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-soft">
@@ -320,7 +332,7 @@ function Section({
                 </span>
               )}
               {!showNew && item.in_stock && (
-                <span className="absolute left-3 top-3 rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground shadow-soft">
+                <span className="absolute left-3 top-3 rounded-full bg-background/95 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary shadow-soft backdrop-blur">
                   Top pick
                 </span>
               )}
@@ -337,7 +349,7 @@ function Section({
                 <span className="font-display text-xl font-extrabold">₹{Number(item.price).toFixed(0)}</span>
                 <Button
                   size="sm"
-                  variant="hero"
+                  variant="default"
                   disabled={!item.in_stock}
                   onClick={() => {
                     addItem({ id: item.id, name: item.name, price: Number(item.price), image_url: item.image_url });
