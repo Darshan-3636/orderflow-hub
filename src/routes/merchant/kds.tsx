@@ -76,35 +76,39 @@ function KDSPage() {
   const ready = orders.filter((o) => o.status === "ready");
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="-m-4 flex min-h-[calc(100vh-3.5rem)] flex-col sm:-m-6">
+      <div className="flex items-center justify-between border-b border-border/60 bg-card px-6 py-4">
         <div>
-          <h1 className="font-display text-3xl font-bold">Cook Mode</h1>
-          <p className="text-muted-foreground">Live kitchen display — auto-refreshing.</p>
+          <h1 className="font-display text-2xl font-extrabold">Cook Mode</h1>
+          <p className="text-xs text-muted-foreground">Live kitchen display — auto-refreshing</p>
         </div>
-        <div className="text-xs text-muted-foreground" data-tick={tick}>● Live</div>
+        <div className="flex items-center gap-2 rounded-full bg-success/15 px-3 py-1 text-xs font-bold text-success" data-tick={tick}>
+          <span className="h-2 w-2 animate-pulse rounded-full bg-success" /> LIVE
+        </div>
       </div>
 
       {loading ? (
-        <p className="text-muted-foreground">Loading orders…</p>
+        <p className="p-8 text-muted-foreground">Loading orders…</p>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid flex-1 grid-cols-1 lg:grid-cols-2">
           <Column
-            title="Pending"
-            icon={<ChefHat className="h-5 w-5" />}
-            color="warning"
+            title="Cooking"
+            subtitle="In the kitchen"
+            icon={<ChefHat className="h-6 w-6" />}
+            tone="cooking"
             orders={pending}
             actionLabel="Mark ready"
             onAction={(id) => updateStatus(id, "ready")}
           />
           <Column
-            title="Ready for pickup"
-            icon={<Package className="h-5 w-5" />}
-            color="success"
+            title="Ready"
+            subtitle="For pickup"
+            icon={<Package className="h-6 w-6" />}
+            tone="ready"
             orders={ready}
-            actionLabel="Complete order"
+            actionLabel="Complete"
             onAction={(id) => updateStatus(id, "completed")}
-            secondaryActionLabel="Move to pending"
+            secondaryActionLabel="Move to cooking"
             onSecondaryAction={(id) => updateStatus(id, "pending")}
           />
         </div>
@@ -114,67 +118,84 @@ function KDSPage() {
 }
 
 function Column({
-  title, icon, color, orders, actionLabel, onAction, secondaryActionLabel, onSecondaryAction,
+  title, subtitle, icon, tone, orders, actionLabel, onAction, secondaryActionLabel, onSecondaryAction,
 }: {
   title: string;
+  subtitle: string;
   icon: React.ReactNode;
-  color: "warning" | "success";
+  tone: "cooking" | "ready";
   orders: Order[];
   actionLabel: string;
   onAction: (id: string) => void;
   secondaryActionLabel?: string;
   onSecondaryAction?: (id: string) => void;
 }) {
+  const headerBg = tone === "cooking" ? "bg-warning/20 border-warning/30" : "bg-success/20 border-success/30";
+  const iconBg = tone === "cooking" ? "bg-warning text-warning-foreground" : "bg-success text-success-foreground";
+  const sectionBg = tone === "cooking" ? "bg-warning/5" : "bg-success/5";
+
   return (
-    <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
-      <header className="mb-3 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 font-display text-xl font-semibold">{icon}{title}</h2>
-        <span className={`rounded-full px-3 py-1 text-xs font-medium ${color === "warning" ? "bg-warning/20 text-warning-foreground" : "bg-success/20 text-success-foreground"}`}>
+    <section className={`flex flex-col border-border/60 ${sectionBg} ${tone === "cooking" ? "lg:border-r" : ""}`}>
+      <header className={`flex items-center justify-between gap-3 border-b px-6 py-4 ${headerBg}`}>
+        <div className="flex items-center gap-3">
+          <div className={`flex h-12 w-12 items-center justify-center rounded-2xl shadow-soft ${iconBg}`}>{icon}</div>
+          <div>
+            <h2 className="font-display text-2xl font-extrabold">{title}</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{subtitle}</p>
+          </div>
+        </div>
+        <span className="rounded-full bg-background px-4 py-1.5 font-display text-2xl font-extrabold shadow-soft">
           {orders.length}
         </span>
       </header>
+
       {orders.length === 0 ? (
-        <p className="py-8 text-center text-sm text-muted-foreground">No orders here.</p>
+        <div className="flex flex-1 flex-col items-center justify-center p-12 text-center">
+          <div className="text-5xl opacity-30">🍳</div>
+          <p className="mt-3 text-sm font-medium text-muted-foreground">No orders here.</p>
+        </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid flex-1 grid-cols-1 gap-4 overflow-y-auto p-4 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
           {orders.map((o) => (
-            <li key={o.id} className="rounded-xl border border-border/60 bg-background p-4">
-              <div className="flex items-start justify-between gap-3">
+            <li key={o.id} className="overflow-hidden rounded-3xl bg-card shadow-soft">
+              <div className="flex items-start justify-between gap-3 border-b border-border/60 p-5">
                 <div>
-                  <div className="font-display text-2xl font-bold text-primary">#{o.short_code}</div>
-                  <div className="text-sm font-medium">{o.customer_name}</div>
+                  <div className="font-display text-5xl font-extrabold leading-none tracking-tight">#{o.short_code}</div>
+                  <div className="mt-2 text-base font-bold">{o.customer_name}</div>
                   <div className="text-xs text-muted-foreground">{o.customer_phone}</div>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Clock className="h-3 w-3" />{timeAgo(o.created_at)}
+                <div className="flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-xs font-bold text-foreground">
+                  <Clock className="h-3.5 w-3.5" />{timeAgo(o.created_at)}
                 </div>
               </div>
-              <ul className="mt-3 space-y-1 text-sm">
+              <ul className="space-y-2 p-5 text-base">
                 {o.order_items?.map((it) => (
-                  <li key={it.id} className="flex justify-between border-b border-border/40 pb-1 last:border-0">
-                    <span>{it.name}</span>
-                    <span className="font-semibold">×{it.quantity}</span>
+                  <li key={it.id} className="flex items-center justify-between border-b border-border/40 pb-2 last:border-0">
+                    <span className="font-medium">{it.name}</span>
+                    <span className="rounded-full bg-secondary px-2.5 py-0.5 font-display text-sm font-bold">×{it.quantity}</span>
                   </li>
                 ))}
               </ul>
-              <Button
-                variant={color === "warning" ? "hero" : "soft"}
-                size="sm"
-                className="mt-3 w-full"
-                onClick={() => onAction(o.id)}
-              >
-                <CheckCircle2 className="mr-1 h-4 w-4" />{actionLabel}
-              </Button>
-              {onSecondaryAction && secondaryActionLabel && (
+              <div className="grid gap-2 p-5 pt-0 sm:grid-cols-1">
                 <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-2 w-full"
-                  onClick={() => onSecondaryAction(o.id)}
+                  variant={tone === "cooking" ? "sage" : "charcoal"}
+                  size="lg"
+                  className="w-full text-base"
+                  onClick={() => onAction(o.id)}
                 >
-                  <ChefHat className="mr-1 h-4 w-4" />{secondaryActionLabel}
+                  <CheckCircle2 className="mr-1 h-5 w-5" />{actionLabel}
                 </Button>
-              )}
+                {onSecondaryAction && secondaryActionLabel && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => onSecondaryAction(o.id)}
+                  >
+                    <ChefHat className="mr-1 h-4 w-4" />{secondaryActionLabel}
+                  </Button>
+                )}
+              </div>
             </li>
           ))}
         </ul>

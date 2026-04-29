@@ -208,41 +208,49 @@ function Section({
           View all →
         </Link>
       </div>
-      <div className="scrollbar-hide -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
+      <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-3 sm:-mx-6 sm:px-6">
         {items.map((item) => (
           <article
             key={item.id}
-            className={`group relative flex w-64 shrink-0 flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant ${
+            className={`group relative flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-3xl bg-card shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant ${
               !item.in_stock ? "opacity-60" : ""
             }`}
           >
-            <div className="relative h-44 overflow-hidden bg-gradient-warm">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-t-3xl bg-gradient-warm">
               {item.image_url ? (
                 <img
                   src={item.image_url}
                   alt={item.name}
-                  className="h-full w-full object-cover transition-smooth group-hover:scale-105"
+                  className={`h-full w-full object-cover transition-smooth group-hover:scale-105 ${!item.in_stock ? "grayscale" : ""}`}
                   loading="lazy"
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-6xl">🍽️</div>
               )}
               {showNew && (
-                <span className="absolute left-3 top-3 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground shadow-soft">
-                  ✨ New
+                <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-soft">
+                  New
+                </span>
+              )}
+              {!showNew && item.in_stock && (
+                <span className="absolute left-3 top-3 rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground shadow-soft">
+                  Best seller
                 </span>
               )}
               {!item.in_stock && (
-                <span className="absolute right-3 top-3 rounded-full bg-destructive px-2.5 py-1 text-[10px] font-bold uppercase text-destructive-foreground">
-                  Out of stock
+                <span className="absolute inset-0 flex items-center justify-center bg-charcoal/40 text-xs font-bold uppercase tracking-widest text-charcoal-foreground">
+                  Sold out
                 </span>
               )}
             </div>
             <div className="flex flex-1 flex-col p-4">
-              <h3 className="font-display text-base font-semibold">{item.name}</h3>
+              <h3 className="font-display text-base font-bold">{item.name}</h3>
               <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.description}</p>
+              <div className="mt-3 flex items-center gap-2">
+                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">Vegan</span>
+              </div>
               <div className="mt-3 flex items-center justify-between">
-                <span className="font-display text-xl font-bold text-primary">₹{Number(item.price).toFixed(0)}</span>
+                <span className="font-display text-xl font-extrabold">₹{Number(item.price).toFixed(0)}</span>
                 <Button
                   size="sm"
                   variant="hero"
