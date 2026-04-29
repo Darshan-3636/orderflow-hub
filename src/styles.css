@@ -104,10 +104,11 @@
 
   /* Gradients */
   --gradient-hero: linear-gradient(135deg, oklch(0.5 0.12 150) 0%, oklch(0.62 0.14 145) 100%);
-  --gradient-warm: linear-gradient(135deg, oklch(0.97 0.018 85) 0%, oklch(0.93 0.04 70) 100%);
+  --gradient-warm: linear-gradient(135deg, oklch(0.97 0.018 140) 0%, oklch(0.92 0.05 150) 100%);
   --gradient-card: linear-gradient(180deg, oklch(1 0 0) 0%, oklch(0.985 0.006 90) 100%);
-  --gradient-charcoal: linear-gradient(135deg, oklch(0.2 0.012 80) 0%, oklch(0.28 0.018 90) 100%);
-  --gradient-coral: linear-gradient(135deg, oklch(0.72 0.17 45) 0%, oklch(0.66 0.19 35) 100%);
+  --gradient-charcoal: linear-gradient(135deg, oklch(0.22 0.02 150) 0%, oklch(0.3 0.04 155) 100%);
+  --gradient-coral: linear-gradient(135deg, oklch(0.55 0.13 150) 0%, oklch(0.45 0.12 155) 100%);
+  --gradient-mint: linear-gradient(135deg, oklch(0.88 0.08 155) 0%, oklch(0.78 0.1 150) 100%);
 
   /* Shadows — soft, diffused */
   --shadow-soft: 0 2px 12px -4px color-mix(in oklab, oklch(0.22 0.012 80) 10%, transparent);
