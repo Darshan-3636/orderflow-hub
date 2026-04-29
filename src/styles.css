@@ -188,6 +188,7 @@
   .bg-gradient-card { background-image: var(--gradient-card); }
   .bg-gradient-charcoal { background-image: var(--gradient-charcoal); }
   .bg-gradient-coral { background-image: var(--gradient-coral); }
+  .bg-gradient-mint { background-image: var(--gradient-mint); }
   .shadow-soft { box-shadow: var(--shadow-soft); }
   .shadow-elegant { box-shadow: var(--shadow-elegant); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
