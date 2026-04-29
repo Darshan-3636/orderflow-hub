@@ -81,9 +81,9 @@
   --muted: oklch(0.95 0.008 90);
   --muted-foreground: oklch(0.5 0.012 80);
 
-  /* Earthy coral / orange — CTA appetite */
-  --accent: oklch(0.7 0.17 45);
-  --accent-foreground: oklch(0.99 0.005 90);
+  /* Soft mint accent — fresh, vital */
+  --accent: oklch(0.86 0.09 155);
+  --accent-foreground: oklch(0.25 0.04 150);
 
   --success: oklch(0.6 0.15 150);
   --success-foreground: oklch(0.99 0.005 90);
