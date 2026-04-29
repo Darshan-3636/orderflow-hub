@@ -165,6 +165,16 @@ function Column({
               >
                 <CheckCircle2 className="mr-1 h-4 w-4" />{actionLabel}
               </Button>
+              {onSecondaryAction && secondaryActionLabel && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2 w-full"
+                  onClick={() => onSecondaryAction(o.id)}
+                >
+                  <ChefHat className="mr-1 h-4 w-4" />{secondaryActionLabel}
+                </Button>
+              )}
             </li>
           ))}
         </ul>
