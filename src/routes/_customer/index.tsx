@@ -41,66 +41,62 @@ function HomePage() {
 
   return (
     <div>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* Decorative blobs */}
-        <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-        <div className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-accent/20 blur-3xl" />
+      {/* Hero — charcoal premium */}
+      <section className="relative mx-auto mt-4 max-w-7xl overflow-hidden rounded-[2.5rem] bg-gradient-charcoal px-4 sm:mx-6 sm:px-8">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-accent/20 blur-3xl" />
 
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 md:py-20">
-          <div className="relative z-10 flex flex-col justify-center">
-            <span className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-background/80 px-3 py-1.5 text-xs font-semibold text-primary shadow-soft backdrop-blur">
-              <Leaf className="h-3.5 w-3.5" /> Farm-fresh, made to order
+        <div className="relative grid items-center gap-10 py-14 md:grid-cols-2 md:gap-6 md:py-20">
+          <div className="relative z-10 flex flex-col">
+            <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-charcoal-foreground/15 bg-charcoal-foreground/10 px-3.5 py-1.5 text-xs font-semibold text-charcoal-foreground backdrop-blur">
+              <Leaf className="h-3.5 w-3.5" /> Farm-to-table, daily
             </span>
-            <h1 className="font-display text-5xl font-bold leading-[1.05] text-foreground sm:text-6xl md:text-7xl">
-              Honest food,<br />
+            <h1 className="font-display text-5xl font-extrabold leading-[1.02] text-charcoal-foreground sm:text-6xl md:text-7xl">
+              Fresh.<br />Healthy.<br />
               <span className="relative inline-block">
-                <span className="relative z-10">made with care</span>
-                <span className="absolute bottom-1 left-0 -z-0 h-3 w-full rounded-full bg-accent/40" />
+                <span className="relative z-10 text-accent">Yours.</span>
               </span>
-              .
             </h1>
-            <p className="mt-5 max-w-md text-lg text-muted-foreground">
+            <p className="mt-6 max-w-md text-lg text-charcoal-foreground/70">
               Seasonal ingredients, simple recipes, generous portions. Order ahead and skip the line.
             </p>
-            <div className="mt-7 flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
               <Button asChild variant="hero" size="xl">
-                <Link to="/explore">Browse menu <ArrowRight className="h-4 w-4" /></Link>
+                <Link to="/explore">Order now <ArrowRight className="h-4 w-4" /></Link>
               </Button>
-              <Button asChild variant="ghost" size="xl">
-                <Link to="/orders">Order again</Link>
+              <Button asChild size="xl" className="border border-charcoal-foreground/20 bg-charcoal-foreground/10 text-charcoal-foreground hover:bg-charcoal-foreground/15">
+                <Link to="/orders">View past orders</Link>
               </Button>
             </div>
 
-            {/* Mini stats */}
             <div className="mt-10 flex flex-wrap items-center gap-6">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {[0, 1, 2].map((i) => (
                     <div
                       key={i}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-background bg-gradient-hero text-xs font-bold text-primary-foreground shadow-soft"
+                      className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-charcoal bg-gradient-coral text-xs font-bold text-accent-foreground"
                     >
                       {String.fromCharCode(65 + i)}
                     </div>
                   ))}
                 </div>
-                <div className="text-sm">
-                  <div className="flex items-center gap-1 text-amber-500">
+                <div>
+                  <div className="flex items-center gap-1 text-accent">
                     {[0, 1, 2, 3, 4].map((i) => (
                       <Star key={i} className="h-3.5 w-3.5 fill-current" />
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground">Loved by 2,000+ guests</p>
+                  <p className="text-xs text-charcoal-foreground/60">Loved by 2,000+ guests</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Hero image */}
-          <div className="relative">
-            <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-hero opacity-20 blur-2xl" />
-            <div className="relative overflow-hidden rounded-[2rem] border border-border/40 shadow-elegant">
+          <div className="relative mx-auto w-full max-w-md md:max-w-none">
+            <div className="absolute -inset-6 rounded-[3rem] bg-gradient-coral opacity-25 blur-3xl" />
+            <div className="relative aspect-square overflow-hidden rounded-[2.5rem] shadow-elegant">
               <img
                 src={heroFood}
                 alt="Fresh seasonal salad with herbs and pesto"
@@ -108,17 +104,15 @@ function HomePage() {
                 width={1024}
                 height={1024}
               />
-              {/* Floating badges */}
-              <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-background/90 px-3 py-1.5 text-xs font-semibold shadow-soft backdrop-blur">
-                <Leaf className="h-3.5 w-3.5 text-primary" />
-                100% fresh
+              <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full bg-background/95 px-3.5 py-2 text-xs font-bold shadow-soft backdrop-blur">
+                <Leaf className="h-3.5 w-3.5 text-primary" /> 100% fresh
               </div>
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-2xl bg-background/95 px-4 py-3 shadow-elegant backdrop-blur">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-hero">
+              <div className="absolute bottom-5 right-5 flex items-center gap-2.5 rounded-2xl bg-background/95 px-4 py-3 shadow-elegant backdrop-blur">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
                   <Clock className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <div>
-                  <div className="font-display text-sm font-bold">~15 min</div>
+                  <div className="font-display text-sm font-extrabold">~15 min</div>
                   <div className="text-[10px] text-muted-foreground">Avg. prep time</div>
                 </div>
               </div>
@@ -128,7 +122,7 @@ function HomePage() {
       </section>
 
       {/* Feature strip */}
-      <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <div className="grid gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-soft sm:grid-cols-3 sm:p-6">
           <Feature icon={<ChefHat className="h-5 w-5" />} title="Made to order" desc="Cooked when you order, never sitting." />
           <Feature icon={<Leaf className="h-5 w-5" />} title="Local & seasonal" desc="Ingredients from nearby growers." />
@@ -136,10 +130,8 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Best sellers */}
       <Section title="Best sellers" subtitle="Guest favourites you'll come back for" icon={<Flame className="h-4 w-4" />} items={featured} addItem={addItem} />
 
-      {/* Newly added */}
       {newItems.length > 0 && (
         <Section
           title="Newly added"
@@ -153,19 +145,19 @@ function HomePage() {
 
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-hero p-8 shadow-elegant sm:p-12">
-          <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-primary-foreground/10 blur-2xl" />
-          <div className="absolute -bottom-10 -left-10 h-56 w-56 rounded-full bg-accent/30 blur-3xl" />
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-charcoal p-8 shadow-elegant sm:p-14">
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/25 blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-primary/30 blur-3xl" />
           <div className="relative grid items-center gap-6 md:grid-cols-[1fr_auto]">
             <div>
-              <h2 className="font-display text-3xl font-bold text-primary-foreground sm:text-4xl">
+              <h2 className="font-display text-3xl font-extrabold text-charcoal-foreground sm:text-4xl">
                 Hungry? Skip the line.
               </h2>
-              <p className="mt-2 max-w-lg text-primary-foreground/85">
-                Place your order now, get a 4-digit pickup code, and we'll have it ready when you arrive.
+              <p className="mt-2 max-w-lg text-charcoal-foreground/75">
+                Place your order, get a 4-digit pickup code, and we'll have it ready when you arrive.
               </p>
             </div>
-            <Button asChild variant="secondary" size="xl">
+            <Button asChild variant="hero" size="xl">
               <Link to="/explore">Start an order <ArrowRight className="h-4 w-4" /></Link>
             </Button>
           </div>
@@ -216,41 +208,49 @@ function Section({
           View all →
         </Link>
       </div>
-      <div className="scrollbar-hide -mx-4 flex gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6">
+      <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-3 sm:-mx-6 sm:px-6">
         {items.map((item) => (
           <article
             key={item.id}
-            className={`group relative flex w-64 shrink-0 flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant ${
+            className={`group relative flex w-64 shrink-0 snap-start flex-col overflow-hidden rounded-3xl bg-card shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant ${
               !item.in_stock ? "opacity-60" : ""
             }`}
           >
-            <div className="relative h-44 overflow-hidden bg-gradient-warm">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-t-3xl bg-gradient-warm">
               {item.image_url ? (
                 <img
                   src={item.image_url}
                   alt={item.name}
-                  className="h-full w-full object-cover transition-smooth group-hover:scale-105"
+                  className={`h-full w-full object-cover transition-smooth group-hover:scale-105 ${!item.in_stock ? "grayscale" : ""}`}
                   loading="lazy"
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-6xl">🍽️</div>
               )}
               {showNew && (
-                <span className="absolute left-3 top-3 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground shadow-soft">
-                  ✨ New
+                <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-soft">
+                  New
+                </span>
+              )}
+              {!showNew && item.in_stock && (
+                <span className="absolute left-3 top-3 rounded-full bg-accent px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent-foreground shadow-soft">
+                  Best seller
                 </span>
               )}
               {!item.in_stock && (
-                <span className="absolute right-3 top-3 rounded-full bg-destructive px-2.5 py-1 text-[10px] font-bold uppercase text-destructive-foreground">
-                  Out of stock
+                <span className="absolute inset-0 flex items-center justify-center bg-charcoal/40 text-xs font-bold uppercase tracking-widest text-charcoal-foreground">
+                  Sold out
                 </span>
               )}
             </div>
             <div className="flex flex-1 flex-col p-4">
-              <h3 className="font-display text-base font-semibold">{item.name}</h3>
+              <h3 className="font-display text-base font-bold">{item.name}</h3>
               <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.description}</p>
+              <div className="mt-3 flex items-center gap-2">
+                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">Vegan</span>
+              </div>
               <div className="mt-3 flex items-center justify-between">
-                <span className="font-display text-xl font-bold text-primary">₹{Number(item.price).toFixed(0)}</span>
+                <span className="font-display text-xl font-extrabold">₹{Number(item.price).toFixed(0)}</span>
                 <Button
                   size="sm"
                   variant="hero"
