@@ -104,6 +104,8 @@ function KDSPage() {
             orders={ready}
             actionLabel="Complete order"
             onAction={(id) => updateStatus(id, "completed")}
+            secondaryActionLabel="Move to pending"
+            onSecondaryAction={(id) => updateStatus(id, "pending")}
           />
         </div>
       )}
