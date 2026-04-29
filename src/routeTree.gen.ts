@@ -13,6 +13,12 @@ import { Route as MerchantRouteImport } from './routes/merchant'
 import { Route as CustomerRouteImport } from './routes/_customer'
 import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
 import { Route as CustomerIndexRouteImport } from './routes/_customer/index'
+import { Route as MerchantSettingsRouteImport } from './routes/merchant/settings'
+import { Route as MerchantReviewsRouteImport } from './routes/merchant/reviews'
+import { Route as MerchantOrdersRouteImport } from './routes/merchant/orders'
+import { Route as MerchantMenuRouteImport } from './routes/merchant/menu'
+import { Route as MerchantKdsRouteImport } from './routes/merchant/kds'
+import { Route as MerchantEmployeesRouteImport } from './routes/merchant/employees'
 import { Route as CustomerProfileRouteImport } from './routes/_customer/profile'
 import { Route as CustomerOrdersRouteImport } from './routes/_customer/orders'
 import { Route as CustomerExploreRouteImport } from './routes/_customer/explore'
@@ -36,6 +42,36 @@ const CustomerIndexRoute = CustomerIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CustomerRoute,
+} as any)
+const MerchantSettingsRoute = MerchantSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => MerchantRoute,
+} as any)
+const MerchantReviewsRoute = MerchantReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => MerchantRoute,
+} as any)
+const MerchantOrdersRoute = MerchantOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => MerchantRoute,
+} as any)
+const MerchantMenuRoute = MerchantMenuRouteImport.update({
+  id: '/menu',
+  path: '/menu',
+  getParentRoute: () => MerchantRoute,
+} as any)
+const MerchantKdsRoute = MerchantKdsRouteImport.update({
+  id: '/kds',
+  path: '/kds',
+  getParentRoute: () => MerchantRoute,
+} as any)
+const MerchantEmployeesRoute = MerchantEmployeesRouteImport.update({
+  id: '/employees',
+  path: '/employees',
+  getParentRoute: () => MerchantRoute,
 } as any)
 const CustomerProfileRoute = CustomerProfileRouteImport.update({
   id: '/profile',
@@ -65,6 +101,12 @@ export interface FileRoutesByFullPath {
   '/explore': typeof CustomerExploreRoute
   '/orders': typeof CustomerOrdersRoute
   '/profile': typeof CustomerProfileRoute
+  '/merchant/employees': typeof MerchantEmployeesRoute
+  '/merchant/kds': typeof MerchantKdsRoute
+  '/merchant/menu': typeof MerchantMenuRoute
+  '/merchant/orders': typeof MerchantOrdersRoute
+  '/merchant/reviews': typeof MerchantReviewsRoute
+  '/merchant/settings': typeof MerchantSettingsRoute
   '/merchant/': typeof MerchantIndexRoute
 }
 export interface FileRoutesByTo {
@@ -72,6 +114,12 @@ export interface FileRoutesByTo {
   '/explore': typeof CustomerExploreRoute
   '/orders': typeof CustomerOrdersRoute
   '/profile': typeof CustomerProfileRoute
+  '/merchant/employees': typeof MerchantEmployeesRoute
+  '/merchant/kds': typeof MerchantKdsRoute
+  '/merchant/menu': typeof MerchantMenuRoute
+  '/merchant/orders': typeof MerchantOrdersRoute
+  '/merchant/reviews': typeof MerchantReviewsRoute
+  '/merchant/settings': typeof MerchantSettingsRoute
   '/': typeof CustomerIndexRoute
   '/merchant': typeof MerchantIndexRoute
 }
@@ -83,6 +131,12 @@ export interface FileRoutesById {
   '/_customer/explore': typeof CustomerExploreRoute
   '/_customer/orders': typeof CustomerOrdersRoute
   '/_customer/profile': typeof CustomerProfileRoute
+  '/merchant/employees': typeof MerchantEmployeesRoute
+  '/merchant/kds': typeof MerchantKdsRoute
+  '/merchant/menu': typeof MerchantMenuRoute
+  '/merchant/orders': typeof MerchantOrdersRoute
+  '/merchant/reviews': typeof MerchantReviewsRoute
+  '/merchant/settings': typeof MerchantSettingsRoute
   '/_customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
 }
@@ -95,9 +149,27 @@ export interface FileRouteTypes {
     | '/explore'
     | '/orders'
     | '/profile'
+    | '/merchant/employees'
+    | '/merchant/kds'
+    | '/merchant/menu'
+    | '/merchant/orders'
+    | '/merchant/reviews'
+    | '/merchant/settings'
     | '/merchant/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/cart' | '/explore' | '/orders' | '/profile' | '/' | '/merchant'
+  to:
+    | '/cart'
+    | '/explore'
+    | '/orders'
+    | '/profile'
+    | '/merchant/employees'
+    | '/merchant/kds'
+    | '/merchant/menu'
+    | '/merchant/orders'
+    | '/merchant/reviews'
+    | '/merchant/settings'
+    | '/'
+    | '/merchant'
   id:
     | '__root__'
     | '/_customer'
@@ -106,6 +178,12 @@ export interface FileRouteTypes {
     | '/_customer/explore'
     | '/_customer/orders'
     | '/_customer/profile'
+    | '/merchant/employees'
+    | '/merchant/kds'
+    | '/merchant/menu'
+    | '/merchant/orders'
+    | '/merchant/reviews'
+    | '/merchant/settings'
     | '/_customer/'
     | '/merchant/'
   fileRoutesById: FileRoutesById
@@ -144,6 +222,48 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof CustomerIndexRouteImport
       parentRoute: typeof CustomerRoute
+    }
+    '/merchant/settings': {
+      id: '/merchant/settings'
+      path: '/settings'
+      fullPath: '/merchant/settings'
+      preLoaderRoute: typeof MerchantSettingsRouteImport
+      parentRoute: typeof MerchantRoute
+    }
+    '/merchant/reviews': {
+      id: '/merchant/reviews'
+      path: '/reviews'
+      fullPath: '/merchant/reviews'
+      preLoaderRoute: typeof MerchantReviewsRouteImport
+      parentRoute: typeof MerchantRoute
+    }
+    '/merchant/orders': {
+      id: '/merchant/orders'
+      path: '/orders'
+      fullPath: '/merchant/orders'
+      preLoaderRoute: typeof MerchantOrdersRouteImport
+      parentRoute: typeof MerchantRoute
+    }
+    '/merchant/menu': {
+      id: '/merchant/menu'
+      path: '/menu'
+      fullPath: '/merchant/menu'
+      preLoaderRoute: typeof MerchantMenuRouteImport
+      parentRoute: typeof MerchantRoute
+    }
+    '/merchant/kds': {
+      id: '/merchant/kds'
+      path: '/kds'
+      fullPath: '/merchant/kds'
+      preLoaderRoute: typeof MerchantKdsRouteImport
+      parentRoute: typeof MerchantRoute
+    }
+    '/merchant/employees': {
+      id: '/merchant/employees'
+      path: '/employees'
+      fullPath: '/merchant/employees'
+      preLoaderRoute: typeof MerchantEmployeesRouteImport
+      parentRoute: typeof MerchantRoute
     }
     '/_customer/profile': {
       id: '/_customer/profile'
@@ -197,10 +317,22 @@ const CustomerRouteWithChildren = CustomerRoute._addFileChildren(
 )
 
 interface MerchantRouteChildren {
+  MerchantEmployeesRoute: typeof MerchantEmployeesRoute
+  MerchantKdsRoute: typeof MerchantKdsRoute
+  MerchantMenuRoute: typeof MerchantMenuRoute
+  MerchantOrdersRoute: typeof MerchantOrdersRoute
+  MerchantReviewsRoute: typeof MerchantReviewsRoute
+  MerchantSettingsRoute: typeof MerchantSettingsRoute
   MerchantIndexRoute: typeof MerchantIndexRoute
 }
 
 const MerchantRouteChildren: MerchantRouteChildren = {
+  MerchantEmployeesRoute: MerchantEmployeesRoute,
+  MerchantKdsRoute: MerchantKdsRoute,
+  MerchantMenuRoute: MerchantMenuRoute,
+  MerchantOrdersRoute: MerchantOrdersRoute,
+  MerchantReviewsRoute: MerchantReviewsRoute,
+  MerchantSettingsRoute: MerchantSettingsRoute,
   MerchantIndexRoute: MerchantIndexRoute,
 }
 
