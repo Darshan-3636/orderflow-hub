@@ -63,8 +63,9 @@ function KDSPage() {
     return () => clearInterval(id);
   }, []);
 
-  const updateStatus = async (id: string, status: "ready" | "completed") => {
-    const patch: { status: string; ready_at?: string; completed_at?: string } = { status };
+  const updateStatus = async (id: string, status: "pending" | "ready" | "completed") => {
+    const patch: { status: string; ready_at?: string | null; completed_at?: string | null } = { status };
+    if (status === "pending") { patch.ready_at = null; patch.completed_at = null; }
     if (status === "ready") patch.ready_at = new Date().toISOString();
     if (status === "completed") patch.completed_at = new Date().toISOString();
     const { error } = await supabase.from("orders").update(patch).eq("id", id);
