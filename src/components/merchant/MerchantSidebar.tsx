@@ -23,7 +23,9 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
 
-const adminItems = [
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+
+const adminItems: NavItem[] = [
   { to: "/merchant", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/merchant/kds", label: "Cook Mode", icon: ChefHat },
   { to: "/merchant/menu", label: "Menu", icon: UtensilsCrossed },
@@ -33,7 +35,7 @@ const adminItems = [
   { to: "/merchant/settings", label: "Settings", icon: Settings },
 ];
 
-const employeeItems = [
+const employeeItems: NavItem[] = [
   { to: "/merchant/kds", label: "Cook Mode", icon: ChefHat },
 ];
 
