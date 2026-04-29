@@ -9,50 +9,208 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as MerchantRouteImport } from './routes/merchant'
+import { Route as CustomerRouteImport } from './routes/_customer'
+import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
+import { Route as CustomerIndexRouteImport } from './routes/_customer/index'
+import { Route as CustomerProfileRouteImport } from './routes/_customer/profile'
+import { Route as CustomerOrdersRouteImport } from './routes/_customer/orders'
+import { Route as CustomerExploreRouteImport } from './routes/_customer/explore'
+import { Route as CustomerCartRouteImport } from './routes/_customer/cart'
 
-const IndexRoute = IndexRouteImport.update({
+const MerchantRoute = MerchantRouteImport.update({
+  id: '/merchant',
+  path: '/merchant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerRoute = CustomerRouteImport.update({
+  id: '/_customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MerchantIndexRoute = MerchantIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => MerchantRoute,
+} as any)
+const CustomerIndexRoute = CustomerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CustomerRoute,
+} as any)
+const CustomerProfileRoute = CustomerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => CustomerRoute,
+} as any)
+const CustomerOrdersRoute = CustomerOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => CustomerRoute,
+} as any)
+const CustomerExploreRoute = CustomerExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
+  getParentRoute: () => CustomerRoute,
+} as any)
+const CustomerCartRoute = CustomerCartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => CustomerRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof CustomerIndexRoute
+  '/merchant': typeof MerchantRouteWithChildren
+  '/cart': typeof CustomerCartRoute
+  '/explore': typeof CustomerExploreRoute
+  '/orders': typeof CustomerOrdersRoute
+  '/profile': typeof CustomerProfileRoute
+  '/merchant/': typeof MerchantIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/cart': typeof CustomerCartRoute
+  '/explore': typeof CustomerExploreRoute
+  '/orders': typeof CustomerOrdersRoute
+  '/profile': typeof CustomerProfileRoute
+  '/': typeof CustomerIndexRoute
+  '/merchant': typeof MerchantIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_customer': typeof CustomerRouteWithChildren
+  '/merchant': typeof MerchantRouteWithChildren
+  '/_customer/cart': typeof CustomerCartRoute
+  '/_customer/explore': typeof CustomerExploreRoute
+  '/_customer/orders': typeof CustomerOrdersRoute
+  '/_customer/profile': typeof CustomerProfileRoute
+  '/_customer/': typeof CustomerIndexRoute
+  '/merchant/': typeof MerchantIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/merchant'
+    | '/cart'
+    | '/explore'
+    | '/orders'
+    | '/profile'
+    | '/merchant/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/cart' | '/explore' | '/orders' | '/profile' | '/' | '/merchant'
+  id:
+    | '__root__'
+    | '/_customer'
+    | '/merchant'
+    | '/_customer/cart'
+    | '/_customer/explore'
+    | '/_customer/orders'
+    | '/_customer/profile'
+    | '/_customer/'
+    | '/merchant/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  CustomerRoute: typeof CustomerRouteWithChildren
+  MerchantRoute: typeof MerchantRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/merchant': {
+      id: '/merchant'
+      path: '/merchant'
+      fullPath: '/merchant'
+      preLoaderRoute: typeof MerchantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_customer': {
+      id: '/_customer'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof CustomerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/merchant/': {
+      id: '/merchant/'
+      path: '/'
+      fullPath: '/merchant/'
+      preLoaderRoute: typeof MerchantIndexRouteImport
+      parentRoute: typeof MerchantRoute
+    }
+    '/_customer/': {
+      id: '/_customer/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof CustomerIndexRouteImport
+      parentRoute: typeof CustomerRoute
+    }
+    '/_customer/profile': {
+      id: '/_customer/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof CustomerProfileRouteImport
+      parentRoute: typeof CustomerRoute
+    }
+    '/_customer/orders': {
+      id: '/_customer/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof CustomerOrdersRouteImport
+      parentRoute: typeof CustomerRoute
+    }
+    '/_customer/explore': {
+      id: '/_customer/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof CustomerExploreRouteImport
+      parentRoute: typeof CustomerRoute
+    }
+    '/_customer/cart': {
+      id: '/_customer/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CustomerCartRouteImport
+      parentRoute: typeof CustomerRoute
     }
   }
 }
 
+interface CustomerRouteChildren {
+  CustomerCartRoute: typeof CustomerCartRoute
+  CustomerExploreRoute: typeof CustomerExploreRoute
+  CustomerOrdersRoute: typeof CustomerOrdersRoute
+  CustomerProfileRoute: typeof CustomerProfileRoute
+  CustomerIndexRoute: typeof CustomerIndexRoute
+}
+
+const CustomerRouteChildren: CustomerRouteChildren = {
+  CustomerCartRoute: CustomerCartRoute,
+  CustomerExploreRoute: CustomerExploreRoute,
+  CustomerOrdersRoute: CustomerOrdersRoute,
+  CustomerProfileRoute: CustomerProfileRoute,
+  CustomerIndexRoute: CustomerIndexRoute,
+}
+
+const CustomerRouteWithChildren = CustomerRoute._addFileChildren(
+  CustomerRouteChildren,
+)
+
+interface MerchantRouteChildren {
+  MerchantIndexRoute: typeof MerchantIndexRoute
+}
+
+const MerchantRouteChildren: MerchantRouteChildren = {
+  MerchantIndexRoute: MerchantIndexRoute,
+}
+
+const MerchantRouteWithChildren = MerchantRoute._addFileChildren(
+  MerchantRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  CustomerRoute: CustomerRouteWithChildren,
+  MerchantRoute: MerchantRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
