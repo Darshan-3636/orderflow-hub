@@ -64,7 +64,7 @@ function KDSPage() {
   }, []);
 
   const updateStatus = async (id: string, status: "ready" | "completed") => {
-    const patch: Record<string, unknown> = { status };
+    const patch: { status: string; ready_at?: string; completed_at?: string } = { status };
     if (status === "ready") patch.ready_at = new Date().toISOString();
     if (status === "completed") patch.completed_at = new Date().toISOString();
     const { error } = await supabase.from("orders").update(patch).eq("id", id);
