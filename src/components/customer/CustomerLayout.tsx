@@ -35,8 +35,29 @@ export function CustomerLayout() {
       <main>
         <Outlet />
       </main>
-      <footer className="mt-16 border-t border-border/60 py-8 text-center text-sm text-muted-foreground">
-        <p>© {new Date().getFullYear()} {restaurantName}. Made fresh, daily.</p>
+      <footer className="mt-16 border-t border-border/60 bg-gradient-warm">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
+          <div>
+            <h3 className="font-display text-2xl font-bold">{restaurantName}</h3>
+            <p className="mt-2 max-w-xs text-sm text-muted-foreground">
+              Honest food, made fresh daily with seasonal ingredients from local growers.
+            </p>
+          </div>
+          <div>
+            <h4 className="font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">Hours</h4>
+            <ul className="mt-3 space-y-1 text-sm">
+              <li className="flex justify-between"><span>Mon – Fri</span><span className="font-medium">11:00 – 22:00</span></li>
+              <li className="flex justify-between"><span>Sat – Sun</span><span className="font-medium">10:00 – 23:00</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">Visit us</h4>
+            <p className="mt-3 text-sm">Pickup orders only.<br />Skip the line — order ahead.</p>
+          </div>
+        </div>
+        <div className="border-t border-border/60 py-5 text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} {restaurantName}. Made fresh, daily.
+        </div>
       </footer>
     </div>
   );

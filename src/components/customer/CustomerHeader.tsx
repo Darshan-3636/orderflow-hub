@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Info, ShoppingBag, User as UserIcon, LogOut, History } from "lucide-react";
+import { Info, ShoppingBag, User as UserIcon, LogOut, History, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -31,11 +31,15 @@ export function CustomerHeader({ restaurantName }: { restaurantName: string }) {
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-hero shadow-soft">
-                <span className="font-display text-lg font-bold text-primary-foreground">V</span>
+            <Link to="/" className="group flex items-center gap-2.5">
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-hero shadow-elegant transition-smooth group-hover:rotate-6">
+                <Leaf className="h-5 w-5 text-primary-foreground" />
+                <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-background bg-accent" />
               </div>
-              <span className="font-display text-xl font-semibold tracking-tight">{restaurantName}</span>
+              <div className="flex flex-col leading-none">
+                <span className="font-display text-xl font-bold tracking-tight">{restaurantName}</span>
+                <span className="hidden text-[10px] font-medium uppercase tracking-widest text-muted-foreground sm:inline">Fresh kitchen</span>
+              </div>
             </Link>
           </div>
 
