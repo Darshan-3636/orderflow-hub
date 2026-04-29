@@ -63,8 +63,9 @@ function KDSPage() {
     return () => clearInterval(id);
   }, []);
 
-  const updateStatus = async (id: string, status: "ready" | "completed") => {
-    const patch: { status: string; ready_at?: string; completed_at?: string } = { status };
+  const updateStatus = async (id: string, status: "pending" | "ready" | "completed") => {
+    const patch: { status: string; ready_at?: string | null; completed_at?: string | null } = { status };
+    if (status === "pending") { patch.ready_at = null; patch.completed_at = null; }
     if (status === "ready") patch.ready_at = new Date().toISOString();
     if (status === "completed") patch.completed_at = new Date().toISOString();
     const { error } = await supabase.from("orders").update(patch).eq("id", id);
@@ -103,6 +104,8 @@ function KDSPage() {
             orders={ready}
             actionLabel="Complete order"
             onAction={(id) => updateStatus(id, "completed")}
+            secondaryActionLabel="Move to pending"
+            onSecondaryAction={(id) => updateStatus(id, "pending")}
           />
         </div>
       )}
@@ -111,7 +114,7 @@ function KDSPage() {
 }
 
 function Column({
-  title, icon, color, orders, actionLabel, onAction,
+  title, icon, color, orders, actionLabel, onAction, secondaryActionLabel, onSecondaryAction,
 }: {
   title: string;
   icon: React.ReactNode;
@@ -119,6 +122,8 @@ function Column({
   orders: Order[];
   actionLabel: string;
   onAction: (id: string) => void;
+  secondaryActionLabel?: string;
+  onSecondaryAction?: (id: string) => void;
 }) {
   return (
     <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-soft">
@@ -160,6 +165,16 @@ function Column({
               >
                 <CheckCircle2 className="mr-1 h-4 w-4" />{actionLabel}
               </Button>
+              {onSecondaryAction && secondaryActionLabel && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2 w-full"
+                  onClick={() => onSecondaryAction(o.id)}
+                >
+                  <ChefHat className="mr-1 h-4 w-4" />{secondaryActionLabel}
+                </Button>
+              )}
             </li>
           ))}
         </ul>
