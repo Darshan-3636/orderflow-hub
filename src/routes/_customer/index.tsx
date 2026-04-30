@@ -25,6 +25,11 @@ const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 
 function HomePage() {
   const [items, setItems] = useState<Item[]>([]);
+  const [banner, setBanner] = useState<{ url: string | null; name: string; tagline: string | null }>({
+    url: null,
+    name: "Verde Kitchen",
+    tagline: null,
+  });
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -33,6 +38,15 @@ function HomePage() {
       .select("id,name,description,price,image_url,in_stock,created_at")
       .order("created_at", { ascending: false })
       .then(({ data }) => setItems((data as Item[]) ?? []));
+
+    supabase
+      .from("restaurant_settings")
+      .select("name, tagline, banner_url")
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) setBanner({ url: data.banner_url, name: data.name ?? "Verde Kitchen", tagline: data.tagline });
+      });
   }, []);
 
   const isNew = (i: Item) => Date.now() - new Date(i.created_at).getTime() < SEVEN_DAYS;
@@ -42,7 +56,7 @@ function HomePage() {
   return (
     <div className="w-full">
       {/* Hero — light, airy, centered */}
-      <section className="mx-auto w-full max-w-7xl px-4 pt-8 sm:px-6 sm:pt-12">
+      <section className="mx-auto w-full max-w-[1600px] px-6 pt-8 sm:px-10 sm:pt-12">
         <div className="relative grid items-center gap-10 md:grid-cols-2 md:gap-14">
           <div className="flex flex-col items-start text-left">
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-xs font-semibold text-primary">
@@ -93,7 +107,7 @@ function HomePage() {
       </section>
 
       {/* Feature strip */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+      <section className="mx-auto w-full max-w-[1600px] px-6 py-14 sm:px-10 sm:py-20">
         <div className="grid gap-4 sm:grid-cols-3">
           <Feature icon={<Salad className="h-5 w-5" />} title="Crisp, never tired" desc="Greens and vegetables arrive each morning — washed, prepped, plated within hours." />
           <Feature icon={<Sun className="h-5 w-5" />} title="Pure prep" desc="No reheats, no heavy oils, no shortcuts. Just real food cooked to order." />
@@ -102,7 +116,7 @@ function HomePage() {
       </section>
 
       {/* Essence of Freshness */}
-      <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6">
+      <section className="mx-auto w-full max-w-[1600px] px-6 pb-16 sm:px-10">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
             <Sprout className="h-3.5 w-3.5" /> The essence of freshness
@@ -138,7 +152,7 @@ function HomePage() {
       </section>
 
       {/* Campus Connection */}
-      <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6">
+      <section className="mx-auto w-full max-w-[1600px] px-6 pb-16 sm:px-10">
         <div className="rounded-[2rem] bg-gradient-warm p-8 shadow-soft sm:p-14">
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
@@ -170,6 +184,28 @@ function HomePage() {
         </div>
       </section>
 
+      {banner.url && (
+        <section className="mx-auto mt-4 w-full max-w-[1600px] px-6 sm:px-10">
+          <div className="relative overflow-hidden rounded-3xl border border-border/60 shadow-soft">
+            <img
+              src={banner.url}
+              alt={`${banner.name} banner`}
+              className="h-44 w-full object-cover sm:h-56 md:h-72"
+              loading="lazy"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-charcoal/60 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-5 right-5 flex items-end justify-between gap-3 text-white">
+              <div className="min-w-0">
+                <h2 className="font-display text-2xl font-extrabold drop-shadow-md sm:text-3xl">{banner.name}</h2>
+                {banner.tagline && (
+                  <p className="mt-1 line-clamp-2 max-w-xl text-xs drop-shadow sm:text-sm">{banner.tagline}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       <Section title="Today's hot picks" subtitle="Cooked fresh, going fast" icon={<Flame className="h-4 w-4" />} items={featured} addItem={addItem} />
 
       {newItems.length > 0 && (
@@ -184,7 +220,7 @@ function HomePage() {
       )}
 
       {/* Ingredient transparency */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
+      <section className="mx-auto w-full max-w-[1600px] px-6 py-16 sm:px-10">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
             <Leaf className="h-3.5 w-3.5" /> Ingredient transparency
@@ -226,7 +262,7 @@ function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6">
+      <section className="mx-auto w-full max-w-[1600px] px-6 pb-20 sm:px-10">
         <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-mint p-10 text-center shadow-soft sm:p-16">
           <div className="mx-auto max-w-2xl">
             <h2 className="font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
@@ -292,7 +328,7 @@ function Section({
 }) {
   if (items.length === 0) return null;
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6">
+    <section className="mx-auto w-full max-w-[1600px] px-6 py-12 sm:px-10">
       <div className="mb-6 flex items-end justify-between gap-4">
         <div>
           <h2 className="flex items-center gap-2.5 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">

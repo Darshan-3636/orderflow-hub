@@ -32,12 +32,14 @@ export function MerchantLayout() {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         <MerchantSidebar />
-        <div className="flex flex-1 flex-col">
-          <header className="flex h-14 items-center gap-3 border-b border-border/60 bg-background/85 px-4 backdrop-blur-xl">
-            <SidebarTrigger />
-            <span className="font-display text-base font-semibold capitalize text-muted-foreground">{role} workspace</span>
+        <div className="flex flex-1 flex-col min-w-0">
+          <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 bg-background/85 px-4 backdrop-blur-xl">
+            <SidebarTrigger className="shrink-0" />
+            <span className="min-w-0 truncate font-display text-sm font-semibold capitalize text-muted-foreground sm:text-base">
+              {role} workspace
+            </span>
           </header>
-          <main className="flex-1 p-4 sm:p-6">
+          <main className="flex-1 overflow-x-hidden p-4 sm:p-6">
             <Outlet />
           </main>
         </div>

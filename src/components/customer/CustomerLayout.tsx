@@ -48,38 +48,14 @@ export function CustomerLayout() {
     }
   }, [role, loading, pathname, navigate]);
 
-  // Show storefront banner on the store/home page only
-  const showBanner = pathname === "/" && !!settings.banner_url;
-
   return (
     <div className="min-h-screen bg-background">
       <CustomerHeader restaurantName={settings.name} logoUrl={settings.logo_url} />
-      {showBanner && (
-        <section className="mx-auto mt-4 w-full max-w-7xl px-4 sm:px-6">
-          <div className="relative overflow-hidden rounded-3xl border border-border/60 shadow-soft">
-            <img
-              src={settings.banner_url!}
-              alt={`${settings.name} banner`}
-              className="h-44 w-full object-cover sm:h-56 md:h-72"
-              loading="eager"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-charcoal/60 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-5 right-5 flex items-end justify-between gap-3 text-white">
-              <div className="min-w-0">
-                <h2 className="font-display text-2xl font-extrabold drop-shadow-md sm:text-3xl">{settings.name}</h2>
-                {settings.tagline && (
-                  <p className="mt-1 line-clamp-2 max-w-xl text-xs drop-shadow sm:text-sm">{settings.tagline}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
       <main>
         <Outlet />
       </main>
       <footer className="mt-16 border-t border-border/60 bg-gradient-warm">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
+        <div className="mx-auto grid w-full max-w-[1600px] gap-8 px-6 py-12 sm:px-10 md:grid-cols-3">
           <div>
             <h3 className="font-display text-2xl font-bold">{settings.name}</h3>
             <p className="mt-2 max-w-xs text-sm text-muted-foreground">

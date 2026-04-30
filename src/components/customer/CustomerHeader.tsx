@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Info, ShoppingBag, User as UserIcon, LogOut, History, Leaf } from "lucide-react";
+import { ShoppingBag, User as UserIcon, LogOut, History, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
@@ -29,7 +29,7 @@ export function CustomerHeader({ restaurantName, logoUrl }: { restaurantName: st
   return (
     <>
       <header className="sticky top-0 z-40">
-        <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
+        <div className="mx-auto w-full max-w-[1600px] px-4 pt-4 sm:px-6">
           <div className="flex h-16 items-center justify-between gap-4 rounded-full border border-border/60 bg-background/70 px-4 shadow-soft backdrop-blur-xl sm:px-6">
             <Link to="/" className="group flex items-center gap-2.5">
               <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary shadow-soft transition-smooth group-hover:rotate-12">
@@ -60,16 +60,6 @@ export function CustomerHeader({ restaurantName, logoUrl }: { restaurantName: st
             </nav>
 
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Staff login"
-                title="Staff login"
-                onClick={() => setAuthOpen(true)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Info className="h-4 w-4" />
-              </Button>
 
               <Button variant="soft" size="sm" onClick={() => navigate({ to: "/cart" })} className="relative">
                 <ShoppingBag className="h-4 w-4" />
