@@ -23,6 +23,7 @@ import { Route as CustomerProfileRouteImport } from './routes/_customer/profile'
 import { Route as CustomerOrdersRouteImport } from './routes/_customer/orders'
 import { Route as CustomerExploreRouteImport } from './routes/_customer/explore'
 import { Route as CustomerCartRouteImport } from './routes/_customer/cart'
+import { Route as CustomerPaymentReturnRouteImport } from './routes/_customer/payment.return'
 
 const MerchantRoute = MerchantRouteImport.update({
   id: '/merchant',
@@ -93,6 +94,11 @@ const CustomerCartRoute = CustomerCartRouteImport.update({
   path: '/cart',
   getParentRoute: () => CustomerRoute,
 } as any)
+const CustomerPaymentReturnRoute = CustomerPaymentReturnRouteImport.update({
+  id: '/payment/return',
+  path: '/payment/return',
+  getParentRoute: () => CustomerRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof CustomerIndexRoute
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/merchant/reviews': typeof MerchantReviewsRoute
   '/merchant/settings': typeof MerchantSettingsRoute
   '/merchant/': typeof MerchantIndexRoute
+  '/payment/return': typeof CustomerPaymentReturnRoute
 }
 export interface FileRoutesByTo {
   '/cart': typeof CustomerCartRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/merchant/settings': typeof MerchantSettingsRoute
   '/': typeof CustomerIndexRoute
   '/merchant': typeof MerchantIndexRoute
+  '/payment/return': typeof CustomerPaymentReturnRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/merchant/settings': typeof MerchantSettingsRoute
   '/_customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
+  '/_customer/payment/return': typeof CustomerPaymentReturnRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/merchant/reviews'
     | '/merchant/settings'
     | '/merchant/'
+    | '/payment/return'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/cart'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/merchant/settings'
     | '/'
     | '/merchant'
+    | '/payment/return'
   id:
     | '__root__'
     | '/_customer'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/merchant/settings'
     | '/_customer/'
     | '/merchant/'
+    | '/_customer/payment/return'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -293,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerCartRouteImport
       parentRoute: typeof CustomerRoute
     }
+    '/_customer/payment/return': {
+      id: '/_customer/payment/return'
+      path: '/payment/return'
+      fullPath: '/payment/return'
+      preLoaderRoute: typeof CustomerPaymentReturnRouteImport
+      parentRoute: typeof CustomerRoute
+    }
   }
 }
 
@@ -302,6 +321,7 @@ interface CustomerRouteChildren {
   CustomerOrdersRoute: typeof CustomerOrdersRoute
   CustomerProfileRoute: typeof CustomerProfileRoute
   CustomerIndexRoute: typeof CustomerIndexRoute
+  CustomerPaymentReturnRoute: typeof CustomerPaymentReturnRoute
 }
 
 const CustomerRouteChildren: CustomerRouteChildren = {
@@ -310,6 +330,7 @@ const CustomerRouteChildren: CustomerRouteChildren = {
   CustomerOrdersRoute: CustomerOrdersRoute,
   CustomerProfileRoute: CustomerProfileRoute,
   CustomerIndexRoute: CustomerIndexRoute,
+  CustomerPaymentReturnRoute: CustomerPaymentReturnRoute,
 }
 
 const CustomerRouteWithChildren = CustomerRoute._addFileChildren(

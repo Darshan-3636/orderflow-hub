@@ -5,19 +5,21 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { AuthDialog } from "@/components/AuthDialog";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { initiatePhonePePayment } from "@/server/phonepe.functions";
+import { useServerFn } from "@tanstack/react-start";
 
 export const Route = createFileRoute("/_customer/cart")({
   component: CartPage,
 });
 
 function CartPage() {
-  const { items, updateQty, removeItem, subtotal, clear } = useCart();
+  const { items, updateQty, removeItem, subtotal } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [authOpen, setAuthOpen] = useState(false);
   const [placing, setPlacing] = useState(false);
+  const initiate = useServerFn(initiatePhonePePayment);
 
   const tax = subtotal * 0.05;
   const total = subtotal + tax;
@@ -29,50 +31,15 @@ function CartPage() {
     }
     if (items.length === 0) return;
     setPlacing(true);
-    // Pull customer info
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("full_name, phone")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    const { data: order, error } = await supabase
-      .from("orders")
-      .insert({
-        user_id: user.id,
-        customer_name: profile?.full_name ?? user.email ?? "Customer",
-        customer_phone: profile?.phone ?? "",
-        subtotal, tax, total,
-        status: "pending",
-        payment_status: "paid",
-        short_code: "",
-      })
-      .select("id, short_code")
-      .single();
-
-    if (error || !order) {
+    try {
+      const cartHash = items.map((i) => `${i.id}x${i.quantity}`).join("|").slice(0, 60);
+      const res = await initiate({ data: { amount: Number(total.toFixed(2)), cartHash } });
+      // Redirect the browser to PhonePe checkout
+      window.location.href = res.redirectUrl;
+    } catch (e: any) {
       setPlacing(false);
-      toast.error(error?.message ?? "Could not place order");
-      return;
+      toast.error(e?.message ?? "Could not start payment");
     }
-
-    const { error: itemsErr } = await supabase.from("order_items").insert(
-      items.map((i) => ({
-        order_id: order.id,
-        menu_item_id: i.id,
-        name: i.name,
-        price: i.price,
-        quantity: i.quantity,
-      }))
-    );
-    setPlacing(false);
-    if (itemsErr) {
-      toast.error(itemsErr.message);
-      return;
-    }
-    clear();
-    toast.success(`Order placed! Pickup code: ${order.short_code}`);
-    navigate({ to: "/orders" });
   };
 
   if (items.length === 0) {
@@ -117,7 +84,7 @@ function CartPage() {
           <div className="flex justify-between font-display text-lg font-semibold"><span>Total</span><span>₹{total.toFixed(0)}</span></div>
         </div>
         <Button variant="hero" size="lg" className="mt-6 w-full" onClick={placeOrder} disabled={placing}>
-          {placing ? "Placing order…" : user ? "Place order (pay on pickup)" : "Sign in to checkout"}
+          {placing ? "Redirecting to PhonePe…" : user ? `Pay ₹${total.toFixed(0)} with PhonePe` : "Sign in to checkout"}
         </Button>
       </div>
       <AuthDialog open={authOpen} onOpenChange={setAuthOpen} defaultTab="signin" />
