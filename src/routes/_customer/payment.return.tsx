@@ -39,8 +39,16 @@ function PaymentReturn() {
         return;
       }
       try {
-        const res = await verify({ data: { merchantOrderId: moid } });
-        if (res.state !== "COMPLETED") {
+        // Server polls PhonePe for ~12s; we additionally retry a few times
+        // on the client so slow mobile QR confirmations still resolve.
+        let finalState = "PENDING";
+        for (let attempt = 0; attempt < 4; attempt++) {
+          const res = await verify({ data: { merchantOrderId: moid } });
+          finalState = res.state;
+          if (finalState === "COMPLETED" || finalState === "FAILED") break;
+          await new Promise((r) => setTimeout(r, 3000));
+        }
+        if (finalState !== "COMPLETED") {
           setState("failed");
           return;
         }
