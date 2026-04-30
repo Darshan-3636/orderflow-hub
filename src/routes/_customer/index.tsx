@@ -184,6 +184,28 @@ function HomePage() {
         </div>
       </section>
 
+      {banner.url && (
+        <section className="mx-auto mt-4 w-full max-w-[1600px] px-6 sm:px-10">
+          <div className="relative overflow-hidden rounded-3xl border border-border/60 shadow-soft">
+            <img
+              src={banner.url}
+              alt={`${banner.name} banner`}
+              className="h-44 w-full object-cover sm:h-56 md:h-72"
+              loading="lazy"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-charcoal/60 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-5 right-5 flex items-end justify-between gap-3 text-white">
+              <div className="min-w-0">
+                <h2 className="font-display text-2xl font-extrabold drop-shadow-md sm:text-3xl">{banner.name}</h2>
+                {banner.tagline && (
+                  <p className="mt-1 line-clamp-2 max-w-xl text-xs drop-shadow sm:text-sm">{banner.tagline}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       <Section title="Today's hot picks" subtitle="Cooked fresh, going fast" icon={<Flame className="h-4 w-4" />} items={featured} addItem={addItem} />
 
       {newItems.length > 0 && (
