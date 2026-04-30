@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search, UtensilsCrossed } from "lucide-react";
 import { toast } from "sonner";
 
-type Category = { id: string; name: string; sort_order: number };
+type Category = { id: string; name: string; sort_order: number; emoji: string | null };
 type Item = {
   id: string;
   name: string;
@@ -16,29 +16,14 @@ type Item = {
   image_url: string | null;
   in_stock: boolean;
   category_id: string | null;
+  prep_time_minutes: number | null;
 };
 
 export const Route = createFileRoute("/_customer/explore")({
   component: ExplorePage,
 });
 
-// Friendly emoji per category keyword
-function emojiFor(name: string) {
-  const n = name.toLowerCase();
-  if (/(burger|sandwich)/.test(n)) return "🍔";
-  if (/(pizza)/.test(n)) return "🍕";
-  if (/(pasta|noodle)/.test(n)) return "🍝";
-  if (/(salad|veg)/.test(n)) return "🥗";
-  if (/(soup)/.test(n)) return "🍲";
-  if (/(breakfast|egg)/.test(n)) return "🍳";
-  if (/(drink|juice|beverage|coffee|tea)/.test(n)) return "🥤";
-  if (/(dessert|sweet|cake)/.test(n)) return "🍰";
-  if (/(rice|bowl|main|course)/.test(n)) return "🍛";
-  if (/(snack|side|starter|appet)/.test(n)) return "🍟";
-  if (/(seafood|fish)/.test(n)) return "🐟";
-  if (/(chicken|meat|grill)/.test(n)) return "🍗";
-  return "🍽️";
-}
+const FALLBACK_EMOJI = "🍽️";
 
 function ExplorePage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -49,7 +34,7 @@ function ExplorePage() {
 
   useEffect(() => {
     supabase.from("categories").select("*").order("sort_order").then(({ data }) => setCategories((data as Category[]) ?? []));
-    supabase.from("menu_items").select("id,name,description,price,image_url,in_stock,category_id").then(({ data }) => setItems((data as Item[]) ?? []));
+    supabase.from("menu_items").select("id,name,description,price,image_url,in_stock,category_id,prep_time_minutes").then(({ data }) => setItems((data as Item[]) ?? []));
   }, []);
 
   const filtered = useMemo(() => {
@@ -107,7 +92,7 @@ function ExplorePage() {
               key={cat.id}
               active={activeCat === cat.id}
               onClick={() => setActiveCat(cat.id)}
-              emoji={emojiFor(cat.name)}
+              emoji={cat.emoji ?? FALLBACK_EMOJI}
               label={cat.name}
               count={count}
             />
@@ -128,7 +113,7 @@ function ExplorePage() {
           <section key={cat?.id ?? "uncat"}>
             {cat && activeCat === "all" && (
               <h2 className="mb-5 flex items-center gap-2 font-display text-2xl font-bold">
-                <span className="text-2xl">{emojiFor(cat.name)}</span> {cat.name}
+                <span className="text-2xl">{cat.emoji ?? FALLBACK_EMOJI}</span> {cat.name}
               </h2>
             )}
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -148,7 +133,7 @@ function ExplorePage() {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-4xl">{emojiFor(categories.find((c) => c.id === item.category_id)?.name ?? "")}</div>
+                      <div className="flex h-full items-center justify-center text-4xl">{categories.find((c) => c.id === item.category_id)?.emoji ?? FALLBACK_EMOJI}</div>
                     )}
                     {!item.in_stock && (
                       <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold uppercase text-destructive-foreground">
@@ -159,6 +144,11 @@ function ExplorePage() {
                   <div className="flex flex-1 flex-col p-4">
                     <h3 className="font-display text-base font-semibold">{item.name}</h3>
                     <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.description}</p>
+                    {item.prep_time_minutes != null && (
+                      <p className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+                        <span>⏱</span> Ready in ~{item.prep_time_minutes} min
+                      </p>
+                    )}
                     <div className="mt-auto flex items-center justify-between pt-3">
                       <span className="font-display text-xl font-bold text-primary">₹{Number(item.price).toFixed(0)}</span>
                       <Button
