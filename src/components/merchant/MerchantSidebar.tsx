@@ -20,6 +20,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -43,6 +44,8 @@ export function MerchantSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { role, signOut } = useAuth();
   const navigate = useNavigate();
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
 
   const items = role === "admin" ? adminItems : employeeItems;
   const isActive = (to: string, exact?: boolean) => (exact ? pathname === to : pathname === to || pathname.startsWith(to + "/"));
@@ -50,11 +53,11 @@ export function MerchantSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Link to="/merchant" className="flex items-center gap-2 px-2 py-2">
+        <Link to="/merchant" className="flex min-w-0 items-center justify-center gap-2 px-2 py-2 data-[expanded=true]:justify-start" data-expanded={!collapsed}>
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-hero shadow-soft">
             <span className="font-display text-base font-bold text-primary-foreground">V</span>
           </div>
-          <span className="font-display text-base font-semibold">Merchant</span>
+          {!collapsed && <span className="min-w-0 truncate font-display text-base font-semibold">Merchant</span>}
         </Link>
       </SidebarHeader>
       <SidebarContent>
@@ -69,7 +72,7 @@ export function MerchantSidebar() {
                     <SidebarMenuButton asChild isActive={active} className={active ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold" : ""}>
                       <Link to={item.to} className="flex items-center gap-2">
                         <item.icon className="h-4 w-4" />
-                        <span>{item.label}</span>
+                        {!collapsed && <span>{item.label}</span>}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -89,7 +92,7 @@ export function MerchantSidebar() {
               }}
             >
               <LogOut className="h-4 w-4" />
-              <span>Sign out</span>
+              {!collapsed && <span>Sign out</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
