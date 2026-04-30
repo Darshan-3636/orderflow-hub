@@ -29,7 +29,7 @@ export function CustomerHeader({ restaurantName, logoUrl }: { restaurantName: st
   return (
     <>
       <header className="sticky top-0 z-40">
-        <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
+        <div className="mx-auto w-full max-w-[1600px] px-4 pt-4 sm:px-6">
           <div className="flex h-16 items-center justify-between gap-4 rounded-full border border-border/60 bg-background/70 px-4 shadow-soft backdrop-blur-xl sm:px-6">
             <Link to="/" className="group flex items-center gap-2.5">
               <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary shadow-soft transition-smooth group-hover:rotate-12">
