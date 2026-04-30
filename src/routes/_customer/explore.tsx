@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search, UtensilsCrossed } from "lucide-react";
 import { toast } from "sonner";
 
-type Category = { id: string; name: string; sort_order: number };
+type Category = { id: string; name: string; sort_order: number; emoji: string | null };
 type Item = {
   id: string;
   name: string;
@@ -16,29 +16,14 @@ type Item = {
   image_url: string | null;
   in_stock: boolean;
   category_id: string | null;
+  prep_time_minutes: number | null;
 };
 
 export const Route = createFileRoute("/_customer/explore")({
   component: ExplorePage,
 });
 
-// Friendly emoji per category keyword
-function emojiFor(name: string) {
-  const n = name.toLowerCase();
-  if (/(burger|sandwich)/.test(n)) return "🍔";
-  if (/(pizza)/.test(n)) return "🍕";
-  if (/(pasta|noodle)/.test(n)) return "🍝";
-  if (/(salad|veg)/.test(n)) return "🥗";
-  if (/(soup)/.test(n)) return "🍲";
-  if (/(breakfast|egg)/.test(n)) return "🍳";
-  if (/(drink|juice|beverage|coffee|tea)/.test(n)) return "🥤";
-  if (/(dessert|sweet|cake)/.test(n)) return "🍰";
-  if (/(rice|bowl|main|course)/.test(n)) return "🍛";
-  if (/(snack|side|starter|appet)/.test(n)) return "🍟";
-  if (/(seafood|fish)/.test(n)) return "🐟";
-  if (/(chicken|meat|grill)/.test(n)) return "🍗";
-  return "🍽️";
-}
+const FALLBACK_EMOJI = "🍽️";
 
 function ExplorePage() {
   const [categories, setCategories] = useState<Category[]>([]);
