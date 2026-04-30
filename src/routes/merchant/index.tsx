@@ -91,7 +91,7 @@ function MerchantHome() {
         <p className="text-muted-foreground">A quick pulse on today and this month.</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <Stat label="Today's revenue" value={`₹${stats.todayRev.toFixed(0)}`} sub={`${stats.todayCount} orders`} />
         <Stat label="Pending now" value={String(stats.pending)} sub="awaiting kitchen" />
         <Stat label="Daily average" value={`₹${stats.currentDailyAvg.toFixed(0)}`} sub={`${stats.daysElapsed} days elapsed`} />
