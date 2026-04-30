@@ -167,7 +167,7 @@ function MerchantHome() {
         />
         <Stat
           label={stats.isDecline ? "Decline rate" : "Daily MoM growth"}
-          value={`${stats.isDecline ? "↓ " : "+"}${stats.dailyGrowth.toFixed(1)}%`}
+          value={stats.isDecline ? `↓ ${Math.abs(stats.dailyGrowth).toFixed(1)}%` : `+${stats.dailyGrowth.toFixed(1)}%`}
           sub={`vs ₹${stats.previousDailyAvg.toFixed(0)}/day last month`}
           highlight={!stats.isDecline}
           tone={stats.isDecline ? "danger" : "success"}
