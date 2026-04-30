@@ -19,11 +19,24 @@ function MerchantHome() {
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    supabase
-      .from("orders")
-      .select("id, total, status, created_at, order_items(name, quantity, price)")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => setOrders((data as Order[]) ?? []));
+    let mounted = true;
+    const loadOrders = async () => {
+      const pageSize = 1000;
+      const allOrders: Order[] = [];
+      for (let from = 0; ; from += pageSize) {
+        const { data, error } = await supabase
+          .from("orders")
+          .select("id, total, status, created_at, order_items(name, quantity, price)")
+          .order("created_at", { ascending: false })
+          .range(from, from + pageSize - 1);
+        if (error || !data?.length) break;
+        allOrders.push(...(data as Order[]));
+        if (data.length < pageSize) break;
+      }
+      if (mounted) setOrders(allOrders);
+    };
+    loadOrders();
+    return () => { mounted = false; };
   }, []);
 
   const stats = useMemo(() => {
@@ -100,6 +113,7 @@ function MerchantHome() {
           value={`${stats.isDecline ? "↓ " : "+"}${stats.dailyGrowth.toFixed(1)}%`}
           sub={`vs ₹${stats.previousDailyAvg.toFixed(0)}/day last month`}
           highlight={!stats.isDecline}
+          tone={stats.isDecline ? "danger" : "success"}
         />
         <Stat
           label="Peak benchmark"
@@ -144,11 +158,13 @@ function MerchantHome() {
   );
 }
 
-function Stat({ label, value, sub, highlight }: { label: string; value: string; sub: string; highlight?: boolean }) {
+function Stat({ label, value, sub, highlight, tone }: { label: string; value: string; sub: string; highlight?: boolean; tone?: "success" | "danger" }) {
+  const valueTone = tone === "danger" ? "text-destructive" : highlight ? "text-success" : "text-primary";
+
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-soft">
       <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className={`mt-1 font-display text-3xl font-bold ${highlight ? "text-success" : "text-primary"}`}>{value}</div>
+      <div className={`mt-1 font-display text-3xl font-bold ${valueTone}`}>{value}</div>
       <div className="mt-1 text-xs text-muted-foreground">{sub}</div>
     </div>
   );
