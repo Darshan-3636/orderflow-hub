@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_customer/payment/return")({
 function PaymentReturn() {
   const { moid } = useSearch({ from: "/_customer/payment/return" });
   const { items, subtotal, clear } = useCart();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const verify = useServerFn(verifyPhonePePayment);
   const [state, setState] = useState<"checking" | "success" | "failed">("checking");
@@ -31,6 +31,7 @@ function PaymentReturn() {
   const ran = useRef(false);
 
   useEffect(() => {
+    if (authLoading) return;
     if (ran.current) return;
     ran.current = true;
     (async () => {
@@ -108,7 +109,7 @@ function PaymentReturn() {
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [moid, user]);
+  }, [moid, user, authLoading]);
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col items-center justify-center px-6 text-center">
