@@ -57,11 +57,9 @@ function OrdersPage() {
     return () => { supabase.removeChannel(ch); };
   }, [user, load]);
 
-  // Auto-prompt review when an order just became completed and has no review
-  useEffect(() => {
-    const completedNoReview = orders.find((o) => o.status === "completed" && !reviewedIds.has(o.id));
-    if (completedNoReview && !reviewOrder) setReviewOrder(completedNoReview.id);
-  }, [orders, reviewedIds, reviewOrder]);
+  // Review prompt is opened only via the explicit "Rate" button on a completed order.
+  // We intentionally do NOT auto-open it on page load to avoid showing it twice
+  // or showing it during normal history browsing.
 
   const reorder = async (o: Order) => {
     clear();
