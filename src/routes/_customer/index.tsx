@@ -25,6 +25,11 @@ const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 
 function HomePage() {
   const [items, setItems] = useState<Item[]>([]);
+  const [banner, setBanner] = useState<{ url: string | null; name: string; tagline: string | null }>({
+    url: null,
+    name: "Verde Kitchen",
+    tagline: null,
+  });
   const { addItem } = useCart();
 
   useEffect(() => {
@@ -33,6 +38,15 @@ function HomePage() {
       .select("id,name,description,price,image_url,in_stock,created_at")
       .order("created_at", { ascending: false })
       .then(({ data }) => setItems((data as Item[]) ?? []));
+
+    supabase
+      .from("restaurant_settings")
+      .select("name, tagline, banner_url")
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) setBanner({ url: data.banner_url, name: data.name ?? "Verde Kitchen", tagline: data.tagline });
+      });
   }, []);
 
   const isNew = (i: Item) => Date.now() - new Date(i.created_at).getTime() < SEVEN_DAYS;
