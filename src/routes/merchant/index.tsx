@@ -1,19 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  CartesianGrid,
+} from "recharts";
 
 export const Route = createFileRoute("/merchant/")({
   component: MerchantHome,
 });
 
-type Order = { id: string; total: number; status: string; created_at: string; order_items: { name: string; quantity: number; price: number }[] };
+type Order = {
+  id: string;
+  total: number;
+  status: string;
+  created_at: string;
+  order_items: { name: string; quantity: number; price: number }[];
+};
 
-const getMonthKey = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+const getMonthKey = (date: Date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
-const getMonthLabel = (date: Date) => date.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+const getMonthLabel = (date: Date) =>
+  date.toLocaleDateString(undefined, { month: "short", year: "numeric" });
 
-const getDaysInMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+const getDaysInMonth = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
 function MerchantHome() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -36,11 +55,14 @@ function MerchantHome() {
       if (mounted) setOrders(allOrders);
     };
     loadOrders();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const stats = useMemo(() => {
-    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
     const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
     const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0, 23, 59, 59);
@@ -59,9 +81,12 @@ function MerchantHome() {
     const lastMonthRev = sum(lastMonthOrders);
     const currentDailyAvg = monthRev / Math.max(daysElapsed, 1);
     const previousDailyAvg = lastMonthRev / Math.max(daysInLastMonth, 1);
-    const dailyGrowth = previousDailyAvg > 0
-      ? ((currentDailyAvg - previousDailyAvg) / previousDailyAvg) * 100
-      : currentDailyAvg > 0 ? 100 : 0;
+    const dailyGrowth =
+      previousDailyAvg > 0
+        ? ((currentDailyAvg - previousDailyAvg) / previousDailyAvg) * 100
+        : currentDailyAvg > 0
+          ? 100
+          : 0;
     const isDecline = dailyGrowth < 0;
 
     const monthlyTotals = new Map<string, { revenue: number; label: string }>();
@@ -77,23 +102,47 @@ function MerchantHome() {
     // 14-day trend
     const days: { day: string; revenue: number; orders: number }[] = [];
     for (let i = 13; i >= 0; i--) {
-      const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i);
-      const next = new Date(d); next.setDate(next.getDate() + 1);
-      const slice = orders.filter((o) => { const t = new Date(o.created_at); return t >= d && t < next; });
-      days.push({ day: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }), revenue: sum(slice), orders: slice.length });
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() - i);
+      const next = new Date(d);
+      next.setDate(next.getDate() + 1);
+      const slice = orders.filter((o) => {
+        const t = new Date(o.created_at);
+        return t >= d && t < next;
+      });
+      days.push({
+        day: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+        revenue: sum(slice),
+        orders: slice.length,
+      });
     }
 
     // Best sellers
     const counts = new Map<string, number>();
-    monthOrders.forEach((o) => o.order_items?.forEach((it) => counts.set(it.name, (counts.get(it.name) ?? 0) + it.quantity)));
-    const best = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([name, qty]) => ({ name, qty }));
+    monthOrders.forEach((o) =>
+      o.order_items?.forEach((it) => counts.set(it.name, (counts.get(it.name) ?? 0) + it.quantity)),
+    );
+    const best = Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([name, qty]) => ({ name, qty }));
 
     return {
-      todayRev: sum(todayOrders), todayCount: todayOrders.length,
-      monthRev, monthCount: monthOrders.length, dailyGrowth, isDecline, currentDailyAvg, previousDailyAvg, daysElapsed,
-      peakPercent, bestMonthLabel: bestMonth?.label ?? "No record yet",
+      todayRev: sum(todayOrders),
+      todayCount: todayOrders.length,
+      monthRev,
+      monthCount: monthOrders.length,
+      dailyGrowth,
+      isDecline,
+      currentDailyAvg,
+      previousDailyAvg,
+      daysElapsed,
+      peakPercent,
+      bestMonthLabel: bestMonth?.label ?? "No record yet",
       pending: orders.filter((o) => o.status === "pending").length,
-      days, best,
+      days,
+      best,
     };
   }, [orders]);
 
@@ -105,9 +154,17 @@ function MerchantHome() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        <Stat label="Today's revenue" value={`₹${stats.todayRev.toFixed(0)}`} sub={`${stats.todayCount} orders`} />
+        <Stat
+          label="Today's revenue"
+          value={`₹${stats.todayRev.toFixed(0)}`}
+          sub={`${stats.todayCount} orders`}
+        />
         <Stat label="Pending now" value={String(stats.pending)} sub="awaiting kitchen" />
-        <Stat label="Daily average" value={`₹${stats.currentDailyAvg.toFixed(0)}`} sub={`${stats.daysElapsed} days elapsed`} />
+        <Stat
+          label="Daily average"
+          value={`₹${stats.currentDailyAvg.toFixed(0)}`}
+          sub={`${stats.daysElapsed} days elapsed`}
+        />
         <Stat
           label={stats.isDecline ? "Decline rate" : "Daily MoM growth"}
           value={`${stats.isDecline ? "↓ " : "+"}${stats.dailyGrowth.toFixed(1)}%`}
@@ -132,8 +189,20 @@ function MerchantHome() {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={11} />
                 <YAxis stroke="var(--muted-foreground)" fontSize={11} />
-                <Tooltip contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12 }} />
-                <Line type="monotone" dataKey="revenue" stroke="var(--primary)" strokeWidth={2.5} dot={{ r: 3 }} />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 12,
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="var(--primary)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -146,8 +215,20 @@ function MerchantHome() {
               <BarChart data={stats.best} layout="vertical" margin={{ left: 24 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis type="number" stroke="var(--muted-foreground)" fontSize={11} />
-                <YAxis type="category" dataKey="name" stroke="var(--muted-foreground)" fontSize={11} width={110} />
-                <Tooltip contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12 }} />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  stroke="var(--muted-foreground)"
+                  fontSize={11}
+                  width={110}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 12,
+                  }}
+                />
                 <Bar dataKey="qty" fill="var(--primary)" radius={[0, 8, 8, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -158,8 +239,21 @@ function MerchantHome() {
   );
 }
 
-function Stat({ label, value, sub, highlight, tone }: { label: string; value: string; sub: string; highlight?: boolean; tone?: "success" | "danger" }) {
-  const valueTone = tone === "danger" ? "text-destructive" : highlight ? "text-success" : "text-primary";
+function Stat({
+  label,
+  value,
+  sub,
+  highlight,
+  tone,
+}: {
+  label: string;
+  value: string;
+  sub: string;
+  highlight?: boolean;
+  tone?: "success" | "danger";
+}) {
+  const valueTone =
+    tone === "danger" ? "text-destructive" : highlight ? "text-success" : "text-primary";
 
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-soft">
