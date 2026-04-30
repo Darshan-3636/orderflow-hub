@@ -84,7 +84,7 @@ function CartPage() {
           <div className="flex justify-between font-display text-lg font-semibold"><span>Total</span><span>₹{total.toFixed(0)}</span></div>
         </div>
         <Button variant="hero" size="lg" className="mt-6 w-full" onClick={placeOrder} disabled={placing}>
-          {placing ? "Placing order…" : user ? "Place order (pay on pickup)" : "Sign in to checkout"}
+          {placing ? "Redirecting to PhonePe…" : user ? `Pay ₹${total.toFixed(0)} with PhonePe` : "Sign in to checkout"}
         </Button>
       </div>
       <AuthDialog open={authOpen} onOpenChange={setAuthOpen} defaultTab="signin" />
