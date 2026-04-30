@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function CustomerHeader({ restaurantName }: { restaurantName: string }) {
+export function CustomerHeader({ restaurantName, logoUrl }: { restaurantName: string; logoUrl?: string | null }) {
   const { user, signOut } = useAuth();
   const { itemCount } = useCart();
   const [authOpen, setAuthOpen] = useState(false);
@@ -32,8 +32,12 @@ export function CustomerHeader({ restaurantName }: { restaurantName: string }) {
         <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
           <div className="flex h-16 items-center justify-between gap-4 rounded-full border border-border/60 bg-background/70 px-4 shadow-soft backdrop-blur-xl sm:px-6">
             <Link to="/" className="group flex items-center gap-2.5">
-              <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-primary shadow-soft transition-smooth group-hover:rotate-12">
-                <Leaf className="h-5 w-5 text-primary-foreground" />
+              <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary shadow-soft transition-smooth group-hover:rotate-12">
+                {logoUrl ? (
+                  <img src={logoUrl} alt={`${restaurantName} logo`} className="h-full w-full object-cover" />
+                ) : (
+                  <Leaf className="h-5 w-5 text-primary-foreground" />
+                )}
               </div>
               <div className="flex flex-col leading-none">
                 <span className="font-display text-lg font-extrabold tracking-tight">{restaurantName}</span>
