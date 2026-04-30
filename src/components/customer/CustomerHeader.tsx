@@ -60,16 +60,6 @@ export function CustomerHeader({ restaurantName, logoUrl }: { restaurantName: st
             </nav>
 
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Staff login"
-                title="Staff login"
-                onClick={() => setAuthOpen(true)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Info className="h-4 w-4" />
-              </Button>
 
               <Button variant="soft" size="sm" onClick={() => navigate({ to: "/cart" })} className="relative">
                 <ShoppingBag className="h-4 w-4" />
