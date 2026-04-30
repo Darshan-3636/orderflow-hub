@@ -39,6 +39,7 @@ function MenuPage() {
   const [catDialog, setCatDialog] = useState(false);
   const [newCatName, setNewCatName] = useState("");
   const [newCatEmoji, setNewCatEmoji] = useState<string>(CATEGORY_EMOJIS[0]);
+  const [editingCatEmoji, setEditingCatEmoji] = useState<{ id: string; name: string; emoji: string } | null>(null);
 
   const load = useCallback(async () => {
     const [c, i] = await Promise.all([
@@ -115,6 +116,15 @@ function MenuPage() {
     if (!confirm("Delete category? Items in it will be hidden until reassigned.")) return;
     const { error } = await supabase.from("categories").delete().eq("id", id);
     if (error) toast.error(error.message); else { toast.success("Deleted"); load(); }
+  };
+
+  const updateCategoryEmoji = async () => {
+    if (!editingCatEmoji) return;
+    const { error } = await supabase.from("categories").update({ emoji: editingCatEmoji.emoji }).eq("id", editingCatEmoji.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Category emoji updated");
+    setEditingCatEmoji(null);
+    load();
   };
 
   return (
@@ -240,7 +250,10 @@ function MenuPage() {
                   {c.emoji && <span className="text-xl">{c.emoji}</span>}
                   {c.name}
                 </span>
-                <Button variant="ghost" size="icon" onClick={() => deleteCategory(c.id)}><Trash2 className="h-4 w-4" /></Button>
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="sm" onClick={() => setEditingCatEmoji({ id: c.id, name: c.name, emoji: c.emoji ?? CATEGORY_EMOJIS[0] })}>Edit emoji</Button>
+                  <Button variant="ghost" size="icon" onClick={() => deleteCategory(c.id)}><Trash2 className="h-4 w-4" /></Button>
+                </div>
               </li>
             ))}
             {categories.length === 0 && <li className="text-sm text-muted-foreground">No categories yet.</li>}
@@ -275,6 +288,35 @@ function MenuPage() {
               <Plus className="mr-1 h-4 w-4" />Add category
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!editingCatEmoji} onOpenChange={(open) => !open && setEditingCatEmoji(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Edit emoji for {editingCatEmoji?.name}</DialogTitle></DialogHeader>
+          {editingCatEmoji && (
+            <div className="grid grid-cols-10 gap-1">
+              {CATEGORY_EMOJIS.map((em) => (
+                <button
+                  key={em}
+                  type="button"
+                  onClick={() => setEditingCatEmoji({ ...editingCatEmoji, emoji: em })}
+                  className={`flex h-9 w-9 items-center justify-center rounded-md text-xl transition-smooth ${
+                    editingCatEmoji.emoji === em
+                      ? "bg-primary/15 ring-2 ring-primary"
+                      : "bg-background hover:bg-secondary"
+                  }`}
+                  aria-label={`Choose ${em}`}
+                >
+                  {em}
+                </button>
+              ))}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setEditingCatEmoji(null)}>Cancel</Button>
+            <Button variant="hero" onClick={updateCategoryEmoji}>Save emoji</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
