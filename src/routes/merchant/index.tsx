@@ -37,7 +37,9 @@ function MerchantHome() {
     const sum = (arr: Order[]) => arr.reduce((s, o) => s + Number(o.total), 0);
     const monthRev = sum(monthOrders);
     const lastMonthRev = sum(lastMonthOrders);
-    const mom = lastMonthRev ? ((monthRev - lastMonthRev) / lastMonthRev) * 100 : 0;
+    const mom = lastMonthRev > 0
+      ? ((monthRev - lastMonthRev) / lastMonthRev) * 100
+      : monthRev > 0 ? 100 : 0;
 
     // 14-day trend
     const days: { day: string; revenue: number; orders: number }[] = [];
