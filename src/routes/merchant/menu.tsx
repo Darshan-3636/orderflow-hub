@@ -9,18 +9,26 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Plus, Edit, Trash2, Upload, Tag } from "lucide-react";
+import { Plus, Edit, Trash2, Upload, Tag, Clock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/merchant/menu")({
   component: MenuPage,
 });
 
-type Category = { id: string; name: string; sort_order: number };
+type Category = { id: string; name: string; sort_order: number; emoji: string | null };
 type Item = {
   id: string; name: string; description: string | null; price: number;
   image_url: string | null; in_stock: boolean; category_id: string | null;
+  prep_time_minutes: number | null;
 };
+
+// Curated emoji set sellers can pick from when creating a category
+const CATEGORY_EMOJIS = [
+  "🍔","🍕","🍝","🥗","🍲","🍳","🥤","🍰","🍛","🍟",
+  "🐟","🍗","🌮","🍱","🍜","🥘","🥪","🍦","🍪","☕",
+  "🥞","🧁","🍩","🥟","🍿","🥙","🍤","🍣","🥩","🌯",
+];
 
 function MenuPage() {
   const { role } = useAuth();
@@ -30,6 +38,7 @@ function MenuPage() {
   const [editing, setEditing] = useState<Partial<Item> | null>(null);
   const [catDialog, setCatDialog] = useState(false);
   const [newCatName, setNewCatName] = useState("");
+  const [newCatEmoji, setNewCatEmoji] = useState<string>(CATEGORY_EMOJIS[0]);
 
   const load = useCallback(async () => {
     const [c, i] = await Promise.all([
@@ -51,13 +60,19 @@ function MenuPage() {
   const saveItem = async () => {
     if (!editing) return;
     if (!editing.name || editing.price == null) { toast.error("Name and price are required"); return; }
+    if (!editing.category_id) { toast.error("Please select a category"); return; }
+    if (editing.prep_time_minutes == null || Number.isNaN(Number(editing.prep_time_minutes)) || Number(editing.prep_time_minutes) < 0) {
+      toast.error("Please enter a valid preparation time");
+      return;
+    }
     const payload = {
       name: editing.name,
       description: editing.description ?? null,
       price: Number(editing.price),
       image_url: editing.image_url ?? null,
-      category_id: editing.category_id ?? null,
+      category_id: editing.category_id,
       in_stock: editing.in_stock ?? true,
+      prep_time_minutes: Number(editing.prep_time_minutes),
     };
     const { error } = editing.id
       ? await supabase.from("menu_items").update(payload).eq("id", editing.id)
@@ -83,15 +98,21 @@ function MenuPage() {
   };
 
   const addCategory = async () => {
-    if (!newCatName.trim()) return;
+    if (!newCatName.trim()) { toast.error("Enter a category name"); return; }
+    if (!newCatEmoji) { toast.error("Pick an emoji"); return; }
     const sort_order = categories.length + 1;
-    const { error } = await supabase.from("categories").insert({ name: newCatName.trim(), sort_order });
+    const { error } = await supabase.from("categories").insert({ name: newCatName.trim(), emoji: newCatEmoji, sort_order });
     if (error) toast.error(error.message);
-    else { toast.success("Category added"); setNewCatName(""); setCatDialog(false); load(); }
+    else {
+      toast.success("Category added");
+      setNewCatName("");
+      setNewCatEmoji(CATEGORY_EMOJIS[0]);
+      load();
+    }
   };
 
   const deleteCategory = async (id: string) => {
-    if (!confirm("Delete category? Items in it will become uncategorized.")) return;
+    if (!confirm("Delete category? Items in it will be hidden until reassigned.")) return;
     const { error } = await supabase.from("categories").delete().eq("id", id);
     if (error) toast.error(error.message); else { toast.success("Deleted"); load(); }
   };
@@ -106,7 +127,7 @@ function MenuPage() {
         {isAdmin && (
           <div className="flex gap-2">
             <Button variant="soft" onClick={() => setCatDialog(true)}><Tag className="mr-1 h-4 w-4" />Categories</Button>
-            <Button variant="hero" onClick={() => setEditing({ in_stock: true, price: 0 })}>
+            <Button variant="hero" onClick={() => setEditing({ in_stock: true, price: 0, prep_time_minutes: 10 })}>
               <Plus className="mr-1 h-4 w-4" />New item
             </Button>
           </div>
@@ -118,7 +139,10 @@ function MenuPage() {
           const catItems = items.filter((i) => i.category_id === cat.id);
           return (
             <section key={cat.id}>
-              <h2 className="mb-3 font-display text-xl font-semibold">{cat.name}</h2>
+              <h2 className="mb-3 flex items-center gap-2 font-display text-xl font-semibold">
+                {cat.emoji && <span className="text-2xl">{cat.emoji}</span>}
+                {cat.name}
+              </h2>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {catItems.map((item) => (
                   <ItemCard key={item.id} item={item} isAdmin={isAdmin} onToggle={() => toggleStock(item)} onEdit={() => setEditing(item)} onDelete={() => deleteItem(item.id)} />
@@ -133,7 +157,8 @@ function MenuPage() {
           if (uncat.length === 0) return null;
           return (
             <section>
-              <h2 className="mb-3 font-display text-xl font-semibold">Uncategorized</h2>
+              <h2 className="mb-3 font-display text-xl font-semibold text-warning-foreground">Needs a category</h2>
+              <p className="mb-3 text-xs text-muted-foreground">Edit each item and assign a category — uncategorized items are no longer allowed.</p>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {uncat.map((item) => (
                   <ItemCard key={item.id} item={item} isAdmin={isAdmin} onToggle={() => toggleStock(item)} onEdit={() => setEditing(item)} onDelete={() => deleteItem(item.id)} />
@@ -155,15 +180,30 @@ function MenuPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2"><Label>Price (₹)</Label><Input type="number" min={0} step="0.01" value={editing.price ?? 0} onChange={(e) => setEditing({ ...editing, price: Number(e.target.value) })} /></div>
                 <div className="space-y-2">
-                  <Label>Category</Label>
-                  <Select value={editing.category_id ?? "none"} onValueChange={(v) => setEditing({ ...editing, category_id: v === "none" ? null : v })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  <Label>Category <span className="text-destructive">*</span></Label>
+                  <Select value={editing.category_id ?? ""} onValueChange={(v) => setEditing({ ...editing, category_id: v })}>
+                    <SelectTrigger><SelectValue placeholder="Select a category" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">Uncategorized</SelectItem>
-                      {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+                      {categories.length === 0 && <div className="px-2 py-1.5 text-xs text-muted-foreground">No categories yet — create one first.</div>}
+                      {categories.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.emoji ? `${c.emoji}  ${c.name}` : c.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />Preparation time (minutes) <span className="text-destructive">*</span></Label>
+                <Input
+                  type="number"
+                  min={0}
+                  step="1"
+                  placeholder="e.g. 10"
+                  value={editing.prep_time_minutes ?? ""}
+                  onChange={(e) => setEditing({ ...editing, prep_time_minutes: e.target.value === "" ? null : Number(e.target.value) })}
+                />
               </div>
               <div className="space-y-2">
                 <Label>Image</Label>
@@ -196,14 +236,44 @@ function MenuPage() {
           <ul className="space-y-2">
             {categories.map((c) => (
               <li key={c.id} className="flex items-center justify-between rounded-lg border border-border/60 bg-secondary/40 px-3 py-2">
-                <span>{c.name}</span>
+                <span className="flex items-center gap-2">
+                  {c.emoji && <span className="text-xl">{c.emoji}</span>}
+                  {c.name}
+                </span>
                 <Button variant="ghost" size="icon" onClick={() => deleteCategory(c.id)}><Trash2 className="h-4 w-4" /></Button>
               </li>
             ))}
+            {categories.length === 0 && <li className="text-sm text-muted-foreground">No categories yet.</li>}
           </ul>
-          <div className="flex gap-2">
-            <Input placeholder="New category" value={newCatName} onChange={(e) => setNewCatName(e.target.value)} />
-            <Button variant="hero" onClick={addCategory}>Add</Button>
+
+          <div className="space-y-3 rounded-lg border border-border/60 bg-secondary/30 p-3">
+            <div className="space-y-2">
+              <Label className="text-xs uppercase tracking-wide text-muted-foreground">New category</Label>
+              <Input placeholder="Category name" value={newCatName} onChange={(e) => setNewCatName(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs uppercase tracking-wide text-muted-foreground">Pick an emoji</Label>
+              <div className="grid grid-cols-10 gap-1">
+                {CATEGORY_EMOJIS.map((em) => (
+                  <button
+                    key={em}
+                    type="button"
+                    onClick={() => setNewCatEmoji(em)}
+                    className={`flex h-9 w-9 items-center justify-center rounded-md text-xl transition-smooth ${
+                      newCatEmoji === em
+                        ? "bg-primary/15 ring-2 ring-primary"
+                        : "bg-background hover:bg-secondary"
+                    }`}
+                    aria-label={`Choose ${em}`}
+                  >
+                    {em}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Button variant="hero" className="w-full" onClick={addCategory}>
+              <Plus className="mr-1 h-4 w-4" />Add category
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -223,6 +293,11 @@ function ItemCard({ item, isAdmin, onToggle, onEdit, onDelete }: { item: Item; i
           <span className="font-semibold text-primary">₹{Number(item.price).toFixed(0)}</span>
         </div>
         <p className="line-clamp-2 text-xs text-muted-foreground">{item.description}</p>
+        {item.prep_time_minutes != null && (
+          <p className="mt-1 inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+            <Clock className="h-3 w-3" />{item.prep_time_minutes} min prep
+          </p>
+        )}
         <div className="mt-auto flex items-center justify-between pt-2">
           <div className="flex items-center gap-2 text-xs">
             <Switch checked={item.in_stock} onCheckedChange={onToggle} />
