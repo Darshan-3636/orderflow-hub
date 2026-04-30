@@ -144,6 +144,11 @@ function ExplorePage() {
                   <div className="flex flex-1 flex-col p-4">
                     <h3 className="font-display text-base font-semibold">{item.name}</h3>
                     <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.description}</p>
+                    {item.prep_time_minutes != null && (
+                      <p className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+                        <span>⏱</span> Ready in ~{item.prep_time_minutes} min
+                      </p>
+                    )}
                     <div className="mt-auto flex items-center justify-between pt-3">
                       <span className="font-display text-xl font-bold text-primary">₹{Number(item.price).toFixed(0)}</span>
                       <Button
