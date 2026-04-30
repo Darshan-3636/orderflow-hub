@@ -42,7 +42,7 @@ function HomePage() {
   return (
     <div className="w-full">
       {/* Hero — light, airy, centered */}
-      <section className="mx-auto w-full max-w-7xl px-4 pt-8 sm:px-6 sm:pt-12">
+      <section className="mx-auto w-full max-w-[1600px] px-6 pt-8 sm:px-10 sm:pt-12">
         <div className="relative grid items-center gap-10 md:grid-cols-2 md:gap-14">
           <div className="flex flex-col items-start text-left">
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-xs font-semibold text-primary">
@@ -93,7 +93,7 @@ function HomePage() {
       </section>
 
       {/* Feature strip */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+      <section className="mx-auto w-full max-w-[1600px] px-6 py-14 sm:px-10 sm:py-20">
         <div className="grid gap-4 sm:grid-cols-3">
           <Feature icon={<Salad className="h-5 w-5" />} title="Crisp, never tired" desc="Greens and vegetables arrive each morning — washed, prepped, plated within hours." />
           <Feature icon={<Sun className="h-5 w-5" />} title="Pure prep" desc="No reheats, no heavy oils, no shortcuts. Just real food cooked to order." />
@@ -102,7 +102,7 @@ function HomePage() {
       </section>
 
       {/* Essence of Freshness */}
-      <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6">
+      <section className="mx-auto w-full max-w-[1600px] px-6 pb-16 sm:px-10">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
             <Sprout className="h-3.5 w-3.5" /> The essence of freshness
@@ -138,7 +138,7 @@ function HomePage() {
       </section>
 
       {/* Campus Connection */}
-      <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6">
+      <section className="mx-auto w-full max-w-[1600px] px-6 pb-16 sm:px-10">
         <div className="rounded-[2rem] bg-gradient-warm p-8 shadow-soft sm:p-14">
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center gap-2 rounded-full bg-background/80 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
@@ -184,7 +184,7 @@ function HomePage() {
       )}
 
       {/* Ingredient transparency */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
+      <section className="mx-auto w-full max-w-[1600px] px-6 py-16 sm:px-10">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
             <Leaf className="h-3.5 w-3.5" /> Ingredient transparency
@@ -226,7 +226,7 @@ function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="mx-auto w-full max-w-7xl px-4 pb-20 sm:px-6">
+      <section className="mx-auto w-full max-w-[1600px] px-6 pb-20 sm:px-10">
         <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-mint p-10 text-center shadow-soft sm:p-16">
           <div className="mx-auto max-w-2xl">
             <h2 className="font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
@@ -292,7 +292,7 @@ function Section({
 }) {
   if (items.length === 0) return null;
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6">
+    <section className="mx-auto w-full max-w-[1600px] px-6 py-12 sm:px-10">
       <div className="mb-6 flex items-end justify-between gap-4">
         <div>
           <h2 className="flex items-center gap-2.5 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
