@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Info, ShoppingBag, User as UserIcon, LogOut, History, Leaf } from "lucide-react";
+import { ShoppingBag, User as UserIcon, LogOut, History, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
