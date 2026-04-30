@@ -9,15 +9,20 @@ export const Route = createFileRoute("/merchant/")({
 
 type Order = { id: string; total: number; status: string; created_at: string; order_items: { name: string; quantity: number; price: number }[] };
 
+const getMonthKey = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+
+const getMonthLabel = (date: Date) => date.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+
+const getDaysInMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+
 function MerchantHome() {
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    const since = new Date(); since.setDate(since.getDate() - 60);
     supabase
       .from("orders")
       .select("id, total, status, created_at, order_items(name, quantity, price)")
-      .gte("created_at", since.toISOString())
+      .order("created_at", { ascending: false })
       .then(({ data }) => setOrders((data as Order[]) ?? []));
   }, []);
 
@@ -26,6 +31,8 @@ function MerchantHome() {
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
     const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
     const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0, 23, 59, 59);
+    const daysElapsed = today.getDate();
+    const daysInLastMonth = getDaysInMonth(lastMonthStart);
 
     const todayOrders = orders.filter((o) => new Date(o.created_at) >= today);
     const monthOrders = orders.filter((o) => new Date(o.created_at) >= monthStart);
@@ -37,9 +44,22 @@ function MerchantHome() {
     const sum = (arr: Order[]) => arr.reduce((s, o) => s + Number(o.total), 0);
     const monthRev = sum(monthOrders);
     const lastMonthRev = sum(lastMonthOrders);
-    const mom = lastMonthRev > 0
-      ? ((monthRev - lastMonthRev) / lastMonthRev) * 100
-      : monthRev > 0 ? 100 : 0;
+    const currentDailyAvg = monthRev / Math.max(daysElapsed, 1);
+    const previousDailyAvg = lastMonthRev / Math.max(daysInLastMonth, 1);
+    const dailyGrowth = previousDailyAvg > 0
+      ? ((currentDailyAvg - previousDailyAvg) / previousDailyAvg) * 100
+      : currentDailyAvg > 0 ? 100 : 0;
+    const isDecline = dailyGrowth < 0;
+
+    const monthlyTotals = new Map<string, { revenue: number; label: string }>();
+    orders.forEach((order) => {
+      const date = new Date(order.created_at);
+      const key = getMonthKey(date);
+      const current = monthlyTotals.get(key) ?? { revenue: 0, label: getMonthLabel(date) };
+      monthlyTotals.set(key, { ...current, revenue: current.revenue + Number(order.total) });
+    });
+    const bestMonth = Array.from(monthlyTotals.values()).sort((a, b) => b.revenue - a.revenue)[0];
+    const peakPercent = bestMonth?.revenue ? (monthRev / bestMonth.revenue) * 100 : 0;
 
     // 14-day trend
     const days: { day: string; revenue: number; orders: number }[] = [];
@@ -57,7 +77,8 @@ function MerchantHome() {
 
     return {
       todayRev: sum(todayOrders), todayCount: todayOrders.length,
-      monthRev, monthCount: monthOrders.length, mom,
+      monthRev, monthCount: monthOrders.length, dailyGrowth, isDecline, currentDailyAvg, previousDailyAvg, daysElapsed,
+      peakPercent, bestMonthLabel: bestMonth?.label ?? "No record yet",
       pending: orders.filter((o) => o.status === "pending").length,
       days, best,
     };
@@ -73,8 +94,19 @@ function MerchantHome() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Today's revenue" value={`₹${stats.todayRev.toFixed(0)}`} sub={`${stats.todayCount} orders`} />
         <Stat label="Pending now" value={String(stats.pending)} sub="awaiting kitchen" />
-        <Stat label="This month" value={`₹${stats.monthRev.toFixed(0)}`} sub={`${stats.monthCount} orders`} />
-        <Stat label="MoM growth" value={`${stats.mom >= 0 ? "+" : ""}${stats.mom.toFixed(1)}%`} sub="vs. last month" highlight={stats.mom >= 0} />
+        <Stat label="Daily average" value={`₹${stats.currentDailyAvg.toFixed(0)}`} sub={`${stats.daysElapsed} days elapsed`} />
+        <Stat
+          label={stats.isDecline ? "Decline rate" : "Daily MoM growth"}
+          value={`${stats.isDecline ? "↓ " : "+"}${stats.dailyGrowth.toFixed(1)}%`}
+          sub={`vs ₹${stats.previousDailyAvg.toFixed(0)}/day last month`}
+          highlight={!stats.isDecline}
+        />
+        <Stat
+          label="Peak benchmark"
+          value={`${stats.peakPercent.toFixed(0)}%`}
+          sub={`of all-time record (${stats.bestMonthLabel})`}
+          highlight
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
