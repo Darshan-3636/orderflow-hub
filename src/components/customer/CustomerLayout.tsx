@@ -52,7 +52,7 @@ export function CustomerLayout() {
     <div className="min-h-screen bg-background">
       <CustomerHeader restaurantName={settings.name} logoUrl={settings.logo_url} />
       <main>
-        <Outlet context={{ settings }} />
+        <Outlet />
       </main>
       <footer className="mt-16 border-t border-border/60 bg-gradient-warm">
         <div className="mx-auto grid w-full max-w-[1600px] gap-8 px-6 py-12 sm:px-10 md:grid-cols-3">
