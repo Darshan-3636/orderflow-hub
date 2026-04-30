@@ -55,7 +55,7 @@ function ExplorePage() {
   }, [categories, filtered, activeCat]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-[1600px] px-6 py-10 sm:px-10">
       {/* Heading + search */}
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
