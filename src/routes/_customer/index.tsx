@@ -1,11 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Flame, ArrowRight, Leaf, Clock, BookOpen, Brain, MapPin, Salad, Sprout, Sun } from "lucide-react";
+import { Sparkles, Flame, ArrowRight, Leaf, Clock, BookOpen, Brain, MapPin, Salad, Sprout, Sun, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import heroBowl from "@/assets/hero-fresh-bowl.jpg";
+import { AuthDialog } from "@/components/AuthDialog";
+import { ReviewDialog } from "@/components/ReviewDialog";
 
 type Item = {
   id: string;
@@ -31,6 +34,20 @@ function HomePage() {
     tagline: null,
   });
   const { addItem } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [authOpen, setAuthOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+
+  const handleMyOrders = () => {
+    if (!user) { setAuthOpen(true); return; }
+    navigate({ to: "/orders" });
+  };
+
+  const handleFeedback = () => {
+    if (!user) { setAuthOpen(true); return; }
+    setFeedbackOpen(true);
+  };
 
   useEffect(() => {
     supabase
@@ -74,8 +91,8 @@ function HomePage() {
               <Button asChild variant="default" size="xl">
                 <Link to="/explore">Order now <ArrowRight className="h-4 w-4" /></Link>
               </Button>
-              <Button asChild variant="outline" size="xl">
-                <Link to="/orders">My orders</Link>
+              <Button variant="outline" size="xl" onClick={handleMyOrders}>
+                My orders
               </Button>
             </div>
             <div className="mt-10 grid w-full max-w-md grid-cols-3 gap-6">
@@ -169,15 +186,15 @@ function HomePage() {
           </div>
           <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-5">
             {[
-              { name: "Apex", mins: "2 min" },
-              { name: "LHC", mins: "3 min" },
-              { name: "DES", mins: "4 min" },
-              { name: "ESB", mins: "5 min" },
-              { name: "Multipurpose", mins: "3 min" },
+              { name: "Apex", mins: "2 min walk" },
+              { name: "LHC", mins: "1 min walk" },
+              { name: "DES", mins: "2 min walk" },
+              { name: "ESB", mins: "3 min walk" },
+              { name: "Multipurpose", mins: "You are already there" },
             ].map((b) => (
               <div key={b.name} className="rounded-2xl border border-border/60 bg-background p-5 text-center shadow-soft">
                 <div className="font-display text-base font-bold">{b.name}</div>
-                <div className="mt-1 text-xs text-muted-foreground">~{b.mins} walk</div>
+                <div className="mt-1 text-xs text-muted-foreground">{b.mins}</div>
               </div>
             ))}
           </div>
@@ -271,14 +288,25 @@ function HomePage() {
             <p className="mt-4 text-base text-foreground/70 sm:text-lg">
               Order ahead, grab a 4-digit code, skip the queue. Eat well — get back to the grind.
             </p>
-            <div className="mt-7 flex justify-center">
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
               <Button asChild size="xl" variant="default">
                 <Link to="/explore">Start an order <ArrowRight className="h-4 w-4" /></Link>
+              </Button>
+              <Button size="xl" variant="outline" onClick={handleFeedback}>
+                <MessageSquare className="h-4 w-4" /> Share feedback
               </Button>
             </div>
           </div>
         </div>
       </section>
+
+      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
+      <ReviewDialog
+        open={feedbackOpen}
+        onOpenChange={setFeedbackOpen}
+        title="Share your feedback"
+        description="Tell us how our service is doing — no order needed."
+      />
     </div>
   );
 }

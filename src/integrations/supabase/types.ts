@@ -232,30 +232,68 @@ export type Database = {
         }
         Relationships: []
       }
+      review_item_ratings: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          item_name: string
+          menu_item_id: string | null
+          rating: number
+          review_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          item_name: string
+          menu_item_id?: string | null
+          rating: number
+          review_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          item_name?: string
+          menu_item_id?: string | null
+          rating?: number
+          review_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_item_ratings_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           created_at: string
-          food_rating: number
+          food_rating: number | null
           id: string
-          order_id: string
+          order_id: string | null
           service_rating: number
           suggestion: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string
-          food_rating: number
+          food_rating?: number | null
           id?: string
-          order_id: string
+          order_id?: string | null
           service_rating: number
           suggestion?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string
-          food_rating?: number
+          food_rating?: number | null
           id?: string
-          order_id?: string
+          order_id?: string | null
           service_rating?: number
           suggestion?: string | null
           user_id?: string | null
@@ -264,7 +302,7 @@ export type Database = {
           {
             foreignKeyName: "reviews_order_id_fkey"
             columns: ["order_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
