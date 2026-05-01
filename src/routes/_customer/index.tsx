@@ -91,8 +91,8 @@ function HomePage() {
               <Button asChild variant="default" size="xl">
                 <Link to="/explore">Order now <ArrowRight className="h-4 w-4" /></Link>
               </Button>
-              <Button asChild variant="outline" size="xl">
-                <Link to="/orders">My orders</Link>
+              <Button variant="outline" size="xl" onClick={handleMyOrders}>
+                My orders
               </Button>
             </div>
             <div className="mt-10 grid w-full max-w-md grid-cols-3 gap-6">
@@ -288,14 +288,25 @@ function HomePage() {
             <p className="mt-4 text-base text-foreground/70 sm:text-lg">
               Order ahead, grab a 4-digit code, skip the queue. Eat well — get back to the grind.
             </p>
-            <div className="mt-7 flex justify-center">
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
               <Button asChild size="xl" variant="default">
                 <Link to="/explore">Start an order <ArrowRight className="h-4 w-4" /></Link>
+              </Button>
+              <Button size="xl" variant="outline" onClick={handleFeedback}>
+                <MessageSquare className="h-4 w-4" /> Share feedback
               </Button>
             </div>
           </div>
         </div>
       </section>
+
+      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
+      <ReviewDialog
+        open={feedbackOpen}
+        onOpenChange={setFeedbackOpen}
+        title="Share your feedback"
+        description="Tell us how our service is doing — no order needed."
+      />
     </div>
   );
 }
