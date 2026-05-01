@@ -392,7 +392,21 @@ function MenuPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Image</Label>
+                <Label>Ingredients (comma-separated)</Label>
+                <Textarea
+                  rows={2}
+                  placeholder="e.g. paneer, romaine, quinoa, lemon"
+                  value={
+                    Array.isArray(editing.ingredients)
+                      ? editing.ingredients.join(", ")
+                      : (editing.ingredients as unknown as string) ?? ""
+                  }
+                  onChange={(e) =>
+                    setEditing({ ...editing, ingredients: e.target.value as unknown as string[] })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
                 {editing.image_url && (
                   <img
                     src={editing.image_url}
