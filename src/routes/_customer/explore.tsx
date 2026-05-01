@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, UtensilsCrossed } from "lucide-react";
+import { Search, UtensilsCrossed, Star, Trophy } from "lucide-react";
 import { toast } from "sonner";
+import { fetchCategoryRanks, fetchItemRatings, type ItemRatingStat } from "@/lib/menu-stats";
 
 type Category = { id: string; name: string; sort_order: number; emoji: string | null };
 type Item = {
@@ -30,11 +31,29 @@ function ExplorePage() {
   const [items, setItems] = useState<Item[]>([]);
   const [activeCat, setActiveCat] = useState<string>("all");
   const [query, setQuery] = useState("");
+  const [ratings, setRatings] = useState<Record<string, ItemRatingStat>>({});
+  const [ranks, setRanks] = useState<Record<string, number>>({});
   const { addItem } = useCart();
 
   useEffect(() => {
     supabase.from("categories").select("*").order("sort_order").then(({ data }) => setCategories((data as Category[]) ?? []));
-    supabase.from("menu_items").select("id,name,description,price,image_url,in_stock,category_id,prep_time_minutes").then(({ data }) => setItems((data as Item[]) ?? []));
+    supabase
+      .from("menu_items")
+      .select("id,name,description,price,image_url,in_stock,category_id,prep_time_minutes")
+      .then(async ({ data }) => {
+        const list = (data as Item[]) ?? [];
+        setItems(list);
+        const ids = list.map((i) => i.id);
+        const stats = await fetchItemRatings(ids);
+        setRatings(stats);
+        const grouped: Record<string, string[]> = {};
+        for (const it of list) {
+          if (!it.category_id) continue;
+          (grouped[it.category_id] ||= []).push(it.id);
+        }
+        const r = await fetchCategoryRanks(grouped);
+        setRanks(r);
+      });
   }, []);
 
   const filtered = useMemo(() => {
@@ -53,6 +72,9 @@ function ExplorePage() {
       .map((cat) => ({ cat, items: filtered.filter((i) => i.category_id === cat.id) }))
       .filter((g) => g.items.length > 0);
   }, [categories, filtered, activeCat]);
+
+  const categoryName = (id: string | null) =>
+    id ? categories.find((c) => c.id === id)?.name ?? null : null;
 
   return (
     <div className="mx-auto max-w-[1600px] px-6 py-10 sm:px-10">
@@ -117,55 +139,84 @@ function ExplorePage() {
               </h2>
             )}
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {catItems.map((item) => (
-                <article
-                  key={item.id}
-                  className={`group flex overflow-hidden rounded-3xl border border-border/60 bg-card shadow-soft transition-smooth hover:-translate-y-0.5 hover:shadow-elegant ${
-                    !item.in_stock ? "opacity-60" : ""
-                  }`}
-                >
-                  <div className="relative h-36 w-36 shrink-0 overflow-hidden bg-gradient-warm">
-                    {item.image_url ? (
-                      <img
-                        src={item.image_url}
-                        alt={item.name}
-                        className="h-full w-full object-cover transition-smooth group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-4xl">{categories.find((c) => c.id === item.category_id)?.emoji ?? FALLBACK_EMOJI}</div>
-                    )}
-                    {!item.in_stock && (
-                      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold uppercase text-destructive-foreground">
-                        Sold out
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex flex-1 flex-col p-4">
-                    <h3 className="font-display text-base font-semibold">{item.name}</h3>
-                    <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.description}</p>
-                    {item.prep_time_minutes != null && (
-                      <p className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
-                        <span>⏱</span> Ready in ~{item.prep_time_minutes} min
-                      </p>
-                    )}
-                    <div className="mt-auto flex items-center justify-between pt-3">
-                      <span className="font-display text-xl font-bold text-primary">₹{Number(item.price).toFixed(0)}</span>
-                      <Button
-                        size="sm"
-                        variant="hero"
-                        disabled={!item.in_stock}
-                        onClick={() => {
-                          addItem({ id: item.id, name: item.name, price: Number(item.price), image_url: item.image_url });
-                          toast.success(`Added ${item.name}`);
-                        }}
-                      >
-                        + Add
-                      </Button>
+              {catItems.map((item) => {
+                const stat = ratings[item.id];
+                const rank = ranks[item.id];
+                const catLabel = categoryName(item.category_id);
+                return (
+                  <article
+                    key={item.id}
+                    className={`group relative flex overflow-hidden rounded-3xl border border-border/60 bg-card shadow-soft transition-smooth hover:-translate-y-0.5 hover:shadow-elegant ${
+                      !item.in_stock ? "opacity-60" : ""
+                    }`}
+                  >
+                    <Link
+                      to="/menu/$itemId"
+                      params={{ itemId: item.id }}
+                      className="absolute inset-0 z-10"
+                      aria-label={`View ${item.name}`}
+                    />
+                    <div className="relative h-36 w-36 shrink-0 overflow-hidden bg-gradient-warm">
+                      {item.image_url ? (
+                        <img
+                          src={item.image_url}
+                          alt={item.name}
+                          className="h-full w-full object-cover transition-smooth group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-4xl">
+                          {categories.find((c) => c.id === item.category_id)?.emoji ?? FALLBACK_EMOJI}
+                        </div>
+                      )}
+                      {!item.in_stock && (
+                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold uppercase text-destructive-foreground">
+                          Sold out
+                        </span>
+                      )}
+                      {rank && catLabel && (
+                        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-warning px-2 py-0.5 text-[10px] font-bold text-warning-foreground shadow-soft">
+                          <Trophy className="h-3 w-3" /> #{rank} in {catLabel}
+                        </span>
+                      )}
                     </div>
-                  </div>
-                </article>
-              ))}
+                    <div className="flex flex-1 flex-col p-4">
+                      <h3 className="font-display text-base font-semibold">{item.name}</h3>
+                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.description}</p>
+                      <div className="mt-1.5 flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
+                        <span className="inline-flex items-center gap-0.5">
+                          <Star className={`h-3 w-3 ${stat ? "fill-warning text-warning" : "text-muted-foreground/40"}`} />
+                          {stat ? stat.avg.toFixed(1) : "New"}
+                          {stat && <span className="text-muted-foreground/70"> ({stat.count})</span>}
+                        </span>
+                        {item.prep_time_minutes != null && (
+                          <>
+                            <span>·</span>
+                            <span>⏱ ~{item.prep_time_minutes} min</span>
+                          </>
+                        )}
+                      </div>
+                      <div className="mt-auto flex items-center justify-between pt-3">
+                        <span className="font-display text-xl font-bold text-primary">₹{Number(item.price).toFixed(0)}</span>
+                        <Button
+                          size="sm"
+                          variant="hero"
+                          disabled={!item.in_stock}
+                          className="relative z-20"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            addItem({ id: item.id, name: item.name, price: Number(item.price), image_url: item.image_url });
+                            toast.success(`Added ${item.name}`);
+                          }}
+                        >
+                          + Add
+                        </Button>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </section>
         ))}
