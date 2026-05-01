@@ -169,15 +169,15 @@ function HomePage() {
           </div>
           <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-5">
             {[
-              { name: "Apex", mins: "2 min" },
-              { name: "LHC", mins: "3 min" },
-              { name: "DES", mins: "4 min" },
-              { name: "ESB", mins: "5 min" },
-              { name: "Multipurpose", mins: "3 min" },
+              { name: "Apex", mins: "2 min walk" },
+              { name: "LHC", mins: "1 min walk" },
+              { name: "DES", mins: "2 min walk" },
+              { name: "ESB", mins: "3 min walk" },
+              { name: "Multipurpose", mins: "You are already there" },
             ].map((b) => (
               <div key={b.name} className="rounded-2xl border border-border/60 bg-background p-5 text-center shadow-soft">
                 <div className="font-display text-base font-bold">{b.name}</div>
-                <div className="mt-1 text-xs text-muted-foreground">~{b.mins} walk</div>
+                <div className="mt-1 text-xs text-muted-foreground">{b.mins}</div>
               </div>
             ))}
           </div>
