@@ -112,7 +112,7 @@ function PaymentReturn() {
   }, [moid, user, authLoading]);
 
   return (
-    <div className="mx-auto flex min-h-[70vh] max-w-md flex-col items-center justify-center px-6 text-center">
+    <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
       {state === "checking" && (
         <>
           <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -122,14 +122,57 @@ function PaymentReturn() {
       )}
       {state === "success" && (
         <>
-          <CheckCircle2 className="h-12 w-12 text-success" />
-          <h1 className="mt-4 font-display text-2xl font-semibold">Payment successful</h1>
+          <div className="inline-flex items-center gap-2 rounded-full bg-success/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-success">
+            <CheckCircle2 className="h-4 w-4" /> Payment successful
+          </div>
+          <h1 className="mt-4 font-display text-3xl font-extrabold sm:text-4xl">
+            Order confirmed
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Show this code at the counter to pick up your order.
+          </p>
+
           {code && (
-            <p className="mt-2 text-sm text-muted-foreground">
-              Pickup code: <span className="font-display text-base font-bold text-primary">{code}</span>
-            </p>
+            <div className="relative mt-8 w-full max-w-md">
+              {/* Ticket */}
+              <div
+                className="relative overflow-hidden rounded-3xl border border-border/60 bg-card p-8 shadow-elegant"
+                style={{
+                  // notches on the sides for the ticket look
+                  WebkitMaskImage:
+                    "radial-gradient(circle at 0 50%, transparent 14px, #000 14px), radial-gradient(circle at 100% 50%, transparent 14px, #000 14px)",
+                  WebkitMaskComposite: "source-in",
+                  maskComposite: "intersect",
+                }}
+              >
+                <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
+                  Pickup Code
+                </div>
+                <div className="mt-3 flex justify-center gap-2 sm:gap-3">
+                  {code.split("").map((d, i) => (
+                    <span
+                      key={i}
+                      className="flex h-20 w-16 items-center justify-center rounded-2xl border border-primary/30 bg-gradient-mint font-display text-5xl font-extrabold text-primary shadow-soft sm:h-24 sm:w-20 sm:text-6xl"
+                    >
+                      {d}
+                    </span>
+                  ))}
+                </div>
+                <div className="my-6 flex items-center gap-3">
+                  <div className="h-px flex-1 border-t border-dashed border-border/70" />
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Verde Kitchen
+                  </span>
+                  <div className="h-px flex-1 border-t border-dashed border-border/70" />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Keep this code handy — we'll call it out when your order is ready.
+                </p>
+              </div>
+            </div>
           )}
-          <Button variant="hero" className="mt-6" onClick={() => navigate({ to: "/orders" })}>
+
+          <Button variant="hero" size="xl" className="mt-8" onClick={() => navigate({ to: "/orders" })}>
             View my orders
           </Button>
         </>
