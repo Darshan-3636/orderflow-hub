@@ -1,11 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Flame, ArrowRight, Leaf, Clock, BookOpen, Brain, MapPin, Salad, Sprout, Sun } from "lucide-react";
+import { Sparkles, Flame, ArrowRight, Leaf, Clock, BookOpen, Brain, MapPin, Salad, Sprout, Sun, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import heroBowl from "@/assets/hero-fresh-bowl.jpg";
+import { AuthDialog } from "@/components/AuthDialog";
+import { ReviewDialog } from "@/components/ReviewDialog";
 
 type Item = {
   id: string;
