@@ -106,11 +106,6 @@ const CustomerMenuItemIdRoute = CustomerMenuItemIdRouteImport.update({
   path: '/menu/$itemId',
   getParentRoute: () => CustomerRoute,
 } as any)
-const CustomerMenuItemIdRoute = CustomerMenuItemIdRouteImport.update({
-  id: '/menu/$itemId',
-  path: '/menu/$itemId',
-  getParentRoute: () => CustomerRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof CustomerIndexRoute
@@ -163,7 +158,6 @@ export interface FileRoutesById {
   '/merchant/': typeof MerchantIndexRoute
   '/_customer/menu/$itemId': typeof CustomerMenuItemIdRoute
   '/_customer/payment/return': typeof CustomerPaymentReturnRoute
-  '/_customer/menu/$itemId': typeof CustomerMenuItemIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -217,7 +211,7 @@ export interface FileRouteTypes {
     | '/merchant/'
     | '/_customer/menu/$itemId'
     | '/_customer/payment/return'
-    | '/_customer/menu/$itemId'
+  fileRoutesById: FileRoutesById
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
