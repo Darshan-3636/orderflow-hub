@@ -46,6 +46,7 @@ export type Database = {
           id: string
           image_url: string | null
           in_stock: boolean
+          ingredients: string[] | null
           name: string
           prep_time_minutes: number | null
           price: number
@@ -58,6 +59,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           in_stock?: boolean
+          ingredients?: string[] | null
           name: string
           prep_time_minutes?: number | null
           price: number
@@ -70,6 +72,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           in_stock?: boolean
+          ingredients?: string[] | null
           name?: string
           prep_time_minutes?: number | null
           price?: number
