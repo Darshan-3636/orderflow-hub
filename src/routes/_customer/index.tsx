@@ -34,6 +34,20 @@ function HomePage() {
     tagline: null,
   });
   const { addItem } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [authOpen, setAuthOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+
+  const handleMyOrders = () => {
+    if (!user) { setAuthOpen(true); return; }
+    navigate({ to: "/orders" });
+  };
+
+  const handleFeedback = () => {
+    if (!user) { setAuthOpen(true); return; }
+    setFeedbackOpen(true);
+  };
 
   useEffect(() => {
     supabase
