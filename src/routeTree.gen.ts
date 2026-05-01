@@ -24,6 +24,8 @@ import { Route as CustomerOrdersRouteImport } from './routes/_customer/orders'
 import { Route as CustomerExploreRouteImport } from './routes/_customer/explore'
 import { Route as CustomerCartRouteImport } from './routes/_customer/cart'
 import { Route as CustomerPaymentReturnRouteImport } from './routes/_customer/payment.return'
+import { Route as CustomerMenuItemIdRouteImport } from './routes/_customer/menu.$itemId'
+import { Route as CustomerMenuItemIdRouteImport } from './routes/_customer/menu.$itemId'
 
 const MerchantRoute = MerchantRouteImport.update({
   id: '/merchant',
@@ -99,6 +101,11 @@ const CustomerPaymentReturnRoute = CustomerPaymentReturnRouteImport.update({
   path: '/payment/return',
   getParentRoute: () => CustomerRoute,
 } as any)
+const CustomerMenuItemIdRoute = CustomerMenuItemIdRouteImport.update({
+  id: '/menu/$itemId',
+  path: '/menu/$itemId',
+  getParentRoute: () => CustomerRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof CustomerIndexRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/merchant/reviews': typeof MerchantReviewsRoute
   '/merchant/settings': typeof MerchantSettingsRoute
   '/merchant/': typeof MerchantIndexRoute
+  '/menu/$itemId': typeof CustomerMenuItemIdRoute
   '/payment/return': typeof CustomerPaymentReturnRoute
 }
 export interface FileRoutesByTo {
@@ -129,6 +137,7 @@ export interface FileRoutesByTo {
   '/merchant/settings': typeof MerchantSettingsRoute
   '/': typeof CustomerIndexRoute
   '/merchant': typeof MerchantIndexRoute
+  '/menu/$itemId': typeof CustomerMenuItemIdRoute
   '/payment/return': typeof CustomerPaymentReturnRoute
 }
 export interface FileRoutesById {
@@ -147,6 +156,7 @@ export interface FileRoutesById {
   '/merchant/settings': typeof MerchantSettingsRoute
   '/_customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
+  '/_customer/menu/$itemId': typeof CustomerMenuItemIdRoute
   '/_customer/payment/return': typeof CustomerPaymentReturnRoute
 }
 export interface FileRouteTypes {
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/merchant/reviews'
     | '/merchant/settings'
     | '/merchant/'
+    | '/menu/$itemId'
     | '/payment/return'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/merchant/settings'
     | '/'
     | '/merchant'
+    | '/menu/$itemId'
     | '/payment/return'
   id:
     | '__root__'
@@ -197,7 +209,9 @@ export interface FileRouteTypes {
     | '/merchant/settings'
     | '/_customer/'
     | '/merchant/'
+    | '/_customer/menu/$itemId'
     | '/_customer/payment/return'
+  fileRoutesById: FileRoutesById
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -312,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerPaymentReturnRouteImport
       parentRoute: typeof CustomerRoute
     }
+    '/_customer/menu/$itemId': {
+      id: '/_customer/menu/$itemId'
+      path: '/menu/$itemId'
+      fullPath: '/menu/$itemId'
+      preLoaderRoute: typeof CustomerMenuItemIdRouteImport
+      parentRoute: typeof CustomerRoute
+    }
   }
 }
 
@@ -321,6 +342,7 @@ interface CustomerRouteChildren {
   CustomerOrdersRoute: typeof CustomerOrdersRoute
   CustomerProfileRoute: typeof CustomerProfileRoute
   CustomerIndexRoute: typeof CustomerIndexRoute
+  CustomerMenuItemIdRoute: typeof CustomerMenuItemIdRoute
   CustomerPaymentReturnRoute: typeof CustomerPaymentReturnRoute
 }
 
@@ -330,6 +352,7 @@ const CustomerRouteChildren: CustomerRouteChildren = {
   CustomerOrdersRoute: CustomerOrdersRoute,
   CustomerProfileRoute: CustomerProfileRoute,
   CustomerIndexRoute: CustomerIndexRoute,
+  CustomerMenuItemIdRoute: CustomerMenuItemIdRoute,
   CustomerPaymentReturnRoute: CustomerPaymentReturnRoute,
 }
 

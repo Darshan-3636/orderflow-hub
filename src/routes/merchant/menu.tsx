@@ -38,6 +38,7 @@ type Item = {
   in_stock: boolean;
   category_id: string | null;
   prep_time_minutes: number | null;
+  ingredients: string[] | null;
 };
 
 // Curated emoji set sellers can pick from when creating a category
@@ -132,6 +133,12 @@ function MenuPage() {
       toast.error("Please enter a valid preparation time");
       return;
     }
+    const ingredients =
+      Array.isArray(editing.ingredients)
+        ? editing.ingredients
+        : typeof editing.ingredients === "string"
+          ? (editing.ingredients as string).split(",").map((s) => s.trim()).filter(Boolean)
+          : null;
     const payload = {
       name: editing.name,
       description: editing.description ?? null,
@@ -140,6 +147,7 @@ function MenuPage() {
       category_id: editing.category_id,
       in_stock: editing.in_stock ?? true,
       prep_time_minutes: Number(editing.prep_time_minutes),
+      ingredients: ingredients && ingredients.length > 0 ? ingredients : null,
     };
     const { error } = editing.id
       ? await supabase.from("menu_items").update(payload).eq("id", editing.id)
@@ -384,7 +392,21 @@ function MenuPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Image</Label>
+                <Label>Ingredients (comma-separated)</Label>
+                <Textarea
+                  rows={2}
+                  placeholder="e.g. paneer, romaine, quinoa, lemon"
+                  value={
+                    Array.isArray(editing.ingredients)
+                      ? editing.ingredients.join(", ")
+                      : (editing.ingredients as unknown as string) ?? ""
+                  }
+                  onChange={(e) =>
+                    setEditing({ ...editing, ingredients: e.target.value as unknown as string[] })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
                 {editing.image_url && (
                   <img
                     src={editing.image_url}
