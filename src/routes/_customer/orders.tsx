@@ -27,7 +27,7 @@ function OrdersPage() {
   const { addItem, clear } = useCart();
   const [orders, setOrders] = useState<Order[]>([]);
   const [reviewedIds, setReviewedIds] = useState<Set<string>>(new Set());
-  const [reviewOrder, setReviewOrder] = useState<string | null>(null);
+  const [reviewOrder, setReviewOrder] = useState<Order | null>(null);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -110,7 +110,7 @@ function OrdersPage() {
                   <span className="font-semibold">Total: ₹{Number(o.total).toFixed(0)}</span>
                   <div className="flex gap-2">
                     {o.status === "completed" && !reviewedIds.has(o.id) && (
-                      <Button variant="soft" size="sm" onClick={() => setReviewOrder(o.id)}><Star className="mr-1 h-3.5 w-3.5" />Rate</Button>
+                      <Button variant="soft" size="sm" onClick={() => setReviewOrder(o)}><Star className="mr-1 h-3.5 w-3.5" />Rate</Button>
                     )}
                     <Button variant="soft" size="sm" onClick={() => reorder(o)}><RotateCcw className="mr-1 h-3.5 w-3.5" />Reorder</Button>
                   </div>
@@ -127,12 +127,12 @@ function OrdersPage() {
         open={!!reviewOrder}
         onOpenChange={(v) => {
           if (!v) {
-            // mark as handled in local state so it doesn't reopen if skipped
-            if (reviewOrder) setReviewedIds((prev) => new Set(prev).add(reviewOrder));
+            if (reviewOrder) setReviewedIds((prev) => new Set(prev).add(reviewOrder.id));
             setReviewOrder(null);
           }
         }}
-        orderId={reviewOrder}
+        orderId={reviewOrder?.id ?? null}
+        items={reviewOrder?.order_items.map((i) => ({ menu_item_id: i.menu_item_id, name: i.name })) ?? []}
       />
     </div>
   );
