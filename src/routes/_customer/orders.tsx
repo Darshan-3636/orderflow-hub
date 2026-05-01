@@ -37,8 +37,8 @@ function OrdersPage() {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
     setOrders((data as Order[]) ?? []);
-    const { data: rs } = await supabase.from("reviews").select("order_id").eq("user_id", user.id);
-    setReviewedIds(new Set((rs ?? []).map((r) => r.order_id)));
+    const { data: rs } = await supabase.from("reviews").select("order_id").eq("user_id", user.id).not("order_id", "is", null);
+    setReviewedIds(new Set((rs ?? []).map((r) => r.order_id as string).filter(Boolean)));
   }, [user]);
 
   useEffect(() => {
