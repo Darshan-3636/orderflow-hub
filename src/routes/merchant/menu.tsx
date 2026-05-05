@@ -93,7 +93,7 @@ function MenuPage() {
   const load = useCallback(async () => {
     const [c, i] = await Promise.all([
       supabase.from("categories").select("*").order("sort_order"),
-      supabase.from("menu_items").select("*").order("name"),
+      supabase.from("menu_items").select("*").is("deleted_at", null).order("name"),
     ]);
     setCategories((c.data as Category[]) ?? []);
     setItems((i.data as Item[]) ?? []);
@@ -162,8 +162,12 @@ function MenuPage() {
   };
 
   const deleteItem = async (id: string) => {
-    if (!confirm("Delete this item?")) return;
-    const { error } = await supabase.from("menu_items").delete().eq("id", id);
+    if (!confirm("Delete this item? Past orders will keep showing it, and it will be removed from active customer carts.")) return;
+    // Soft-delete: preserve historical orders, dashboards and cook mode views.
+    const { error } = await supabase
+      .from("menu_items")
+      .update({ deleted_at: new Date().toISOString(), in_stock: false })
+      .eq("id", id);
     if (error) toast.error(error.message);
     else {
       toast.success("Deleted");

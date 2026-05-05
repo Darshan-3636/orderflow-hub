@@ -53,6 +53,7 @@ function HomePage() {
     supabase
       .from("menu_items")
       .select("id,name,description,price,image_url,in_stock,created_at")
+      .is("deleted_at", null)
       .order("created_at", { ascending: false })
       .then(({ data }) => setItems((data as Item[]) ?? []));
 

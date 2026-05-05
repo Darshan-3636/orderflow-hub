@@ -40,6 +40,7 @@ function ExplorePage() {
     supabase
       .from("menu_items")
       .select("id,name,description,price,image_url,in_stock,category_id,prep_time_minutes")
+      .is("deleted_at", null)
       .then(async ({ data }) => {
         const list = (data as Item[]) ?? [];
         setItems(list);

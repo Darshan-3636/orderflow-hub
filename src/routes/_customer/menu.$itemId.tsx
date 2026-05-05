@@ -55,6 +55,7 @@ function ItemDetailPage() {
         .from("menu_items")
         .select("id,name,description,price,image_url,in_stock,category_id,prep_time_minutes,ingredients")
         .eq("id", itemId)
+        .is("deleted_at", null)
         .maybeSingle();
       if (cancelled) return;
       setItem((it as Item) ?? null);
@@ -71,7 +72,8 @@ function ItemDetailPage() {
         const { data: siblings } = await supabase
           .from("menu_items")
           .select("id")
-          .eq("category_id", it.category_id);
+          .eq("category_id", it.category_id)
+          .is("deleted_at", null);
         const ids = (siblings ?? []).map((s) => s.id as string);
         const ranks = await fetchCategoryRanks({ [it.category_id]: ids });
         if (!cancelled) setRank(ranks[itemId] ?? null);
