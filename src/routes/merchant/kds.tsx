@@ -11,7 +11,7 @@ export const Route = createFileRoute("/merchant/kds")({
   component: KDSPage,
 });
 
-type OrderItem = { id: string; name: string; quantity: number };
+type OrderItem = { id: string; name: string; quantity: number; price?: number };
 type Order = {
   id: string;
   short_code: string;
