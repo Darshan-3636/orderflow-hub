@@ -64,12 +64,12 @@ function OrdersPage() {
   const reorder = async (o: Order) => {
     clear();
     const ids = o.order_items.map((i) => i.menu_item_id).filter(Boolean) as string[];
-    const { data: live } = await supabase.from("menu_items").select("id, name, price, image_url, in_stock").in("id", ids.length ? ids : [""]);
+    const { data: live } = await supabase.from("menu_items").select("id, name, price, image_url, in_stock, deleted_at").in("id", ids.length ? ids : [""]);
     const byId = new Map((live ?? []).map((m) => [m.id, m]));
     let added = 0, skipped = 0;
     o.order_items.forEach((i) => {
       const m = i.menu_item_id ? byId.get(i.menu_item_id) : null;
-      if (!m || !m.in_stock) { skipped++; return; }
+      if (!m || !m.in_stock || m.deleted_at) { skipped++; return; }
       for (let n = 0; n < i.quantity; n++) addItem({ id: m.id, name: m.name, price: Number(m.price), image_url: m.image_url });
       added++;
     });

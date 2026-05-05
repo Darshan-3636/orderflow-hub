@@ -25,7 +25,6 @@ import { Route as CustomerExploreRouteImport } from './routes/_customer/explore'
 import { Route as CustomerCartRouteImport } from './routes/_customer/cart'
 import { Route as CustomerPaymentReturnRouteImport } from './routes/_customer/payment.return'
 import { Route as CustomerMenuItemIdRouteImport } from './routes/_customer/menu.$itemId'
-import { Route as CustomerMenuItemIdRouteImport } from './routes/_customer/menu.$itemId'
 
 const MerchantRoute = MerchantRouteImport.update({
   id: '/merchant',
@@ -212,7 +211,6 @@ export interface FileRouteTypes {
     | '/_customer/menu/$itemId'
     | '/_customer/payment/return'
   fileRoutesById: FileRoutesById
-  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   CustomerRoute: typeof CustomerRouteWithChildren
@@ -391,12 +389,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
