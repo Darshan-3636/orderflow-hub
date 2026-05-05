@@ -77,15 +77,54 @@ function KDSPage() {
   const pending = orders.filter((o) => o.status === "pending");
   const ready = orders.filter((o) => o.status === "ready");
 
+  const [search, setSearch] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [foundOrder, setFoundOrder] = useState<Order | null>(null);
+  const [notFoundOpen, setNotFoundOpen] = useState(false);
+
+  const runSearch = async () => {
+    const q = search.trim();
+    if (!q) return;
+    setSearching(true);
+    const isCode = /^\d{4}$/.test(q);
+    const base = supabase
+      .from("orders")
+      .select("id, short_code, customer_name, customer_phone, status, total, created_at, ready_at, order_items(id, name, quantity, price)")
+      .order("created_at", { ascending: false })
+      .limit(1);
+    const { data } = isCode
+      ? await base.eq("short_code", q)
+      : await base.ilike("customer_name", `%${q}%`);
+    setSearching(false);
+    const hit = (data as Order[] | null)?.[0];
+    if (hit) setFoundOrder(hit);
+    else setNotFoundOpen(true);
+  };
+
   return (
     <div className="-m-4 flex min-h-[calc(100vh-3.5rem)] flex-col sm:-m-6">
-      <div className="flex items-center justify-between border-b border-border/60 bg-card px-6 py-4">
+      <div className="flex flex-col gap-4 border-b border-border/60 bg-card px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-2xl font-extrabold">Cook Mode</h1>
           <p className="text-xs text-muted-foreground">Live kitchen display — auto-refreshing</p>
         </div>
-        <div className="flex items-center gap-2 rounded-full bg-success/15 px-3 py-1 text-xs font-bold text-success" data-tick={tick}>
-          <span className="h-2 w-2 animate-pulse rounded-full bg-success" /> LIVE
+        <div className="flex flex-1 items-center gap-3 sm:max-w-xl sm:justify-end">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") runSearch(); }}
+              placeholder="Search by 4-digit code or customer name…"
+              className="h-11 rounded-full border-border/70 bg-background pl-10 pr-4 shadow-soft"
+            />
+          </div>
+          <Button onClick={runSearch} disabled={searching || !search.trim()} variant="hero" size="lg" className="rounded-full">
+            {searching ? "Searching…" : "Search"}
+          </Button>
+          <div className="hidden items-center gap-2 rounded-full bg-success/15 px-3 py-1 text-xs font-bold text-success sm:flex" data-tick={tick}>
+            <span className="h-2 w-2 animate-pulse rounded-full bg-success" /> LIVE
+          </div>
         </div>
       </div>
 
@@ -115,7 +154,81 @@ function KDSPage() {
           />
         </div>
       )}
+
+      <OrderDetailDialog order={foundOrder} onOpenChange={(o) => { if (!o) setFoundOrder(null); }} />
+      <Dialog open={notFoundOpen} onOpenChange={setNotFoundOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="font-display text-2xl">Order Not Found</DialogTitle>
+            <DialogDescription>
+              No order matches "{search.trim()}". Try a different code or name.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setNotFoundOpen(false)} variant="hero">Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+}
+
+function statusLabel(s: string) {
+  if (s === "pending") return { label: "Cooking", cls: "bg-warning/20 text-warning border-warning/30" };
+  if (s === "ready") return { label: "Ready for pickup", cls: "bg-success/20 text-success border-success/30" };
+  if (s === "completed") return { label: "Completed", cls: "bg-secondary text-foreground border-border" };
+  return { label: s, cls: "bg-secondary text-foreground border-border" };
+}
+
+function OrderDetailDialog({ order, onOpenChange }: { order: (Order & { order_items: (OrderItem & { price?: number })[] }) | null; onOpenChange: (open: boolean) => void }) {
+  const open = !!order;
+  const st = order ? statusLabel(order.status) : null;
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        {order && st && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center justify-between gap-2 font-display text-2xl">
+                <span className="inline-flex items-center gap-2"><Hash className="h-5 w-5 text-muted-foreground" />{order.short_code}</span>
+                <span className={`rounded-full border px-3 py-1 text-xs font-bold ${st.cls}`}>{st.label}</span>
+              </DialogTitle>
+              <DialogDescription>Order details</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-3 rounded-2xl border border-border/60 bg-secondary/40 p-4 text-sm">
+                <div className="flex items-center gap-2"><User className="h-4 w-4 text-muted-foreground" /><span className="font-semibold">{order.customer_name}</span></div>
+                <div className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /><span>{order.customer_phone}</span></div>
+                <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-muted-foreground" /><span className="text-muted-foreground">Placed {timeAgo(order.created_at)} ago</span></div>
+              </div>
+              <div className="rounded-2xl border border-border/60 bg-card p-4">
+                <div className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">Items</div>
+                <ul className="divide-y divide-border/40">
+                  {order.order_items?.map((it) => (
+                    <li key={it.id} className="flex items-center justify-between py-2 text-sm">
+                      <span className="font-medium">{it.name}</span>
+                      <span className="flex items-center gap-3">
+                        <span className="rounded-full bg-secondary px-2 py-0.5 font-display text-xs font-bold">×{it.quantity}</span>
+                        {typeof it.price === "number" && (
+                          <span className="text-muted-foreground">₹{(Number(it.price) * it.quantity).toFixed(0)}</span>
+                        )}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex items-center justify-between rounded-2xl bg-gradient-hero px-4 py-3 text-primary-foreground">
+                <span className="font-display text-base font-bold">Total</span>
+                <span className="font-display text-2xl font-extrabold">₹{Number(order.total).toFixed(0)}</span>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="hero" onClick={() => onOpenChange(false)}>Close</Button>
+            </DialogFooter>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
