@@ -175,15 +175,15 @@ function ExplorePage() {
                           Sold out
                         </span>
                       )}
-                      {rank && catLabel && (
-                        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-warning px-2 py-0.5 text-[10px] font-bold text-warning-foreground shadow-soft">
-                          <Trophy className="h-3 w-3" /> #{rank} in {catLabel}
-                        </span>
-                      )}
                     </div>
                     <div className="flex flex-1 flex-col p-4">
                       <h3 className="font-display text-base font-semibold">{item.name}</h3>
                       <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{item.description}</p>
+                      {rank && catLabel && (
+                        <span className="mt-2 inline-flex w-fit items-center gap-1 rounded-full border border-warning/40 bg-warning/15 px-2 py-0.5 text-[10px] font-bold text-warning">
+                          <Trophy className="h-3 w-3" /> #{rank} in {catLabel}
+                        </span>
+                      )}
                       <div className="mt-1.5 flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
                         <span className="inline-flex items-center gap-0.5">
                           <Star className={`h-3 w-3 ${stat ? "fill-warning text-warning" : "text-muted-foreground/40"}`} />
