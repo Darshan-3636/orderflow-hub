@@ -2,8 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { ChefHat, CheckCircle2, Clock, Package } from "lucide-react";
+import { ChefHat, CheckCircle2, Clock, Package, Search, Phone, User, Hash } from "lucide-react";
 
 export const Route = createFileRoute("/merchant/kds")({
   component: KDSPage,
