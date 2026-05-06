@@ -145,7 +145,7 @@ export type Database = {
           id: string
           payment_status: string
           ready_at: string | null
-          short_code: string
+          short_code: string | null
           status: string
           subtotal: number
           tax: number
@@ -160,7 +160,7 @@ export type Database = {
           id?: string
           payment_status?: string
           ready_at?: string | null
-          short_code: string
+          short_code?: string | null
           status?: string
           subtotal?: number
           tax?: number
@@ -175,7 +175,7 @@ export type Database = {
           id?: string
           payment_status?: string
           ready_at?: string | null
-          short_code?: string
+          short_code?: string | null
           status?: string
           subtotal?: number
           tax?: number
