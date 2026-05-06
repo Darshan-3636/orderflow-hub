@@ -14,7 +14,7 @@ export const Route = createFileRoute("/merchant/kds")({
 type OrderItem = { id: string; name: string; quantity: number; price?: number };
 type Order = {
   id: string;
-  short_code: string;
+  short_code: string | null;
   customer_name: string;
   customer_phone: string;
   status: string;
