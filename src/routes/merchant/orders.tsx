@@ -9,7 +9,7 @@ export const Route = createFileRoute("/merchant/orders")({
 });
 
 type Order = {
-  id: string; short_code: string; customer_name: string; customer_phone: string;
+  id: string; short_code: string | null; customer_name: string; customer_phone: string;
   status: string; total: number; created_at: string;
   order_items: { name: string; quantity: number }[];
 };
