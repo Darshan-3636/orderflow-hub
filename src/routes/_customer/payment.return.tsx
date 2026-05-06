@@ -101,7 +101,7 @@ function PaymentReturn() {
           return;
         }
         clear();
-        setCode(order.short_code);
+        setCode(order.short_code ?? "");
         setState("success");
       } catch (e) {
         console.error(e);

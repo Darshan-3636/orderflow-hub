@@ -9,7 +9,7 @@ export const Route = createFileRoute("/merchant/orders")({
 });
 
 type Order = {
-  id: string; short_code: string; customer_name: string; customer_phone: string;
+  id: string; short_code: string | null; customer_name: string; customer_phone: string;
   status: string; total: number; created_at: string;
   order_items: { name: string; quantity: number }[];
 };
@@ -30,7 +30,15 @@ function OrdersPage() {
 
   const filtered = orders.filter((o) => {
     if (status !== "all" && o.status !== status) return false;
-    if (search && !o.short_code.includes(search) && !o.customer_name.toLowerCase().includes(search.toLowerCase()) && !o.customer_phone.includes(search)) return false;
+    if (search) {
+      const s = search.toLowerCase();
+      const matches =
+        (o.short_code ?? "").includes(search) ||
+        o.id.toLowerCase().includes(s) ||
+        o.customer_name.toLowerCase().includes(s) ||
+        o.customer_phone.includes(search);
+      if (!matches) return false;
+    }
     return true;
   });
 
@@ -68,7 +76,7 @@ function OrdersPage() {
           <tbody className="divide-y divide-border/60">
             {filtered.map((o) => (
               <tr key={o.id}>
-                <td className="px-4 py-3 font-display font-semibold text-primary">#{o.short_code}</td>
+                <td className="px-4 py-3 font-display font-semibold text-primary">{o.short_code ? `#${o.short_code}` : `#${o.id.slice(0, 8).toUpperCase()}`}</td>
                 <td className="px-4 py-3"><div>{o.customer_name}</div><div className="text-xs text-muted-foreground">{o.customer_phone}</div></td>
                 <td className="px-4 py-3 text-xs text-muted-foreground">{o.order_items?.map((i) => `${i.quantity}× ${i.name}`).join(", ")}</td>
                 <td className="px-4 py-3 font-semibold">₹{Number(o.total).toFixed(0)}</td>

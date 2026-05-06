@@ -10,7 +10,7 @@ import { Star, RotateCcw, CheckCircle2, Clock, Package } from "lucide-react";
 
 type Order = {
   id: string;
-  short_code: string;
+  short_code: string | null;
   status: string;
   total: number;
   created_at: string;
@@ -98,7 +98,11 @@ function OrdersPage() {
               <div key={o.id} className="rounded-2xl border border-border/60 bg-card p-5 shadow-soft">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <div className="font-display text-lg font-semibold">Pickup code: <span className="text-primary">{o.short_code}</span></div>
+                    {o.status === "completed" || !o.short_code ? (
+                      <div className="font-display text-lg font-semibold">Order <span className="text-primary">#{o.id.slice(0, 8).toUpperCase()}</span></div>
+                    ) : (
+                      <div className="font-display text-lg font-semibold">Pickup code: <span className="text-primary">{o.short_code}</span></div>
+                    )}
                     <div className="mt-1 text-xs text-muted-foreground">{new Date(o.created_at).toLocaleString()}</div>
                   </div>
                   <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${s.cls}`}>{s.icon}{s.label}</span>

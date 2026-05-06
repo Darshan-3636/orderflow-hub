@@ -14,7 +14,7 @@ export const Route = createFileRoute("/merchant/kds")({
 type OrderItem = { id: string; name: string; quantity: number; price?: number };
 type Order = {
   id: string;
-  short_code: string;
+  short_code: string | null;
   customer_name: string;
   customer_phone: string;
   status: string;
@@ -190,7 +190,7 @@ function OrderDetailDialog({ order, onOpenChange }: { order: (Order & { order_it
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center justify-between gap-2 font-display text-2xl">
-                <span className="inline-flex items-center gap-2"><Hash className="h-5 w-5 text-muted-foreground" />{order.short_code}</span>
+                <span className="inline-flex items-center gap-2"><Hash className="h-5 w-5 text-muted-foreground" />{order.short_code ?? `Order #${order.id.slice(0, 8).toUpperCase()}`}</span>
                 <span className={`rounded-full border px-3 py-1 text-xs font-bold ${st.cls}`}>{st.label}</span>
               </DialogTitle>
               <DialogDescription>Order details</DialogDescription>
@@ -275,7 +275,7 @@ function Column({
             <li key={o.id} className="overflow-hidden rounded-3xl bg-card shadow-soft">
               <div className="flex items-start justify-between gap-3 border-b border-border/60 p-5">
                 <div>
-                  <div className="font-display text-5xl font-extrabold leading-none tracking-tight">#{o.short_code}</div>
+                  <div className="font-display text-5xl font-extrabold leading-none tracking-tight">#{o.short_code ?? o.id.slice(0, 4).toUpperCase()}</div>
                   <div className="mt-2 text-base font-bold">{o.customer_name}</div>
                   <div className="text-xs text-muted-foreground">{o.customer_phone}</div>
                 </div>
