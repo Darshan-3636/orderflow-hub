@@ -76,7 +76,7 @@ function OrdersPage() {
           <tbody className="divide-y divide-border/60">
             {filtered.map((o) => (
               <tr key={o.id}>
-                <td className="px-4 py-3 font-display font-semibold text-primary">#{o.short_code}</td>
+                <td className="px-4 py-3 font-display font-semibold text-primary">{o.short_code ? `#${o.short_code}` : `#${o.id.slice(0, 8).toUpperCase()}`}</td>
                 <td className="px-4 py-3"><div>{o.customer_name}</div><div className="text-xs text-muted-foreground">{o.customer_phone}</div></td>
                 <td className="px-4 py-3 text-xs text-muted-foreground">{o.order_items?.map((i) => `${i.quantity}× ${i.name}`).join(", ")}</td>
                 <td className="px-4 py-3 font-semibold">₹{Number(o.total).toFixed(0)}</td>
