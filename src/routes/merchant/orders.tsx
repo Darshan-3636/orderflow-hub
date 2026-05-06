@@ -30,7 +30,15 @@ function OrdersPage() {
 
   const filtered = orders.filter((o) => {
     if (status !== "all" && o.status !== status) return false;
-    if (search && !o.short_code.includes(search) && !o.customer_name.toLowerCase().includes(search.toLowerCase()) && !o.customer_phone.includes(search)) return false;
+    if (search) {
+      const s = search.toLowerCase();
+      const matches =
+        (o.short_code ?? "").includes(search) ||
+        o.id.toLowerCase().includes(s) ||
+        o.customer_name.toLowerCase().includes(s) ||
+        o.customer_phone.includes(search);
+      if (!matches) return false;
+    }
     return true;
   });
 
