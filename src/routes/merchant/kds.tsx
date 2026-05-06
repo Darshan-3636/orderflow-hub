@@ -275,7 +275,7 @@ function Column({
             <li key={o.id} className="overflow-hidden rounded-3xl bg-card shadow-soft">
               <div className="flex items-start justify-between gap-3 border-b border-border/60 p-5">
                 <div>
-                  <div className="font-display text-5xl font-extrabold leading-none tracking-tight">#{o.short_code}</div>
+                  <div className="font-display text-5xl font-extrabold leading-none tracking-tight">#{o.short_code ?? o.id.slice(0, 4).toUpperCase()}</div>
                   <div className="mt-2 text-base font-bold">{o.customer_name}</div>
                   <div className="text-xs text-muted-foreground">{o.customer_phone}</div>
                 </div>
