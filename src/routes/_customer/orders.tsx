@@ -10,7 +10,7 @@ import { Star, RotateCcw, CheckCircle2, Clock, Package } from "lucide-react";
 
 type Order = {
   id: string;
-  short_code: string;
+  short_code: string | null;
   status: string;
   total: number;
   created_at: string;
