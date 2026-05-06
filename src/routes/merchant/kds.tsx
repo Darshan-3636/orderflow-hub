@@ -190,7 +190,7 @@ function OrderDetailDialog({ order, onOpenChange }: { order: (Order & { order_it
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center justify-between gap-2 font-display text-2xl">
-                <span className="inline-flex items-center gap-2"><Hash className="h-5 w-5 text-muted-foreground" />{order.short_code}</span>
+                <span className="inline-flex items-center gap-2"><Hash className="h-5 w-5 text-muted-foreground" />{order.short_code ?? `Order #${order.id.slice(0, 8).toUpperCase()}`}</span>
                 <span className={`rounded-full border px-3 py-1 text-xs font-bold ${st.cls}`}>{st.label}</span>
               </DialogTitle>
               <DialogDescription>Order details</DialogDescription>
